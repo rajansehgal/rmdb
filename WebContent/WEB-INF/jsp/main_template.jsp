@@ -7,8 +7,7 @@
 	rel="stylesheet" type="text/css" />
 </head>
 
-<body
-	BACKGROUND="${pageContext.request.contextPath}/images/profileDP.jpg">
+<body>
 	<div id="container">
 		<div id="header">
 			<t:insertAttribute name="header" />

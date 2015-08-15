@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import rajan.springmvc.moviesdb.dao.UserDao;
+import rajan.springmvc.moviesdb.persistence.FileDetails;
 import rajan.springmvc.moviesdb.persistence.User;
 
 @Service("userService")
@@ -33,6 +34,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<String> getMainListing() {
 		return userDao.getMainListing();
+	}
+
+	@Override
+	public List<String> getSubListing(String mainDir) {
+		
+		return userDao.getSubListing(mainDir);
+	}
+
+	@Override
+	public List<FileDetails> getMediaDetails(String mediaType) {
+		
+		return userDao.getMediaDetails(mediaType);
 	}
 
 }
