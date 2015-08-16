@@ -327,16 +327,57 @@ input[type=radio]:checked::after {
 @import
 	url(http://fonts.googleapis.com/css?family=Roboto+Condensed:400,300);
 
-#leftmenu {
-	width: 250px;
+.container .leftmenu {
+	float: left; 
+	width : 250px;
 	height: 100%;
-	background-color: #EBF5FF;
+	background-color: #CEEDF6;
 	border-color: black;
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
 	border-bottom: 1px solid #000000;
 	border-right-style: outset;
 	border-right-width: thin;
+	width: 250px;
+}
+
+.container .rightmenu {
+	float: right;
+	width: 250px;
+	height: 100%;
+	background-color: #CEEDF6;
+	border-color: black;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	border-bottom: 1px solid #000000;
+	border-left-style: outset;
+	border-left-width: thin;
+	border-left-color: black;
+}
+
+.container .centrepanel {
+	margin: 0 auto;
+	text-align: center;
+	background-color: #CEEDF6;
+	border-color: black;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	height: 90%;
+	margin-left: 270px;
+	margin-right: 270px;
+}
+
+.clear {
+	clear: both;
+}
+
+.container {
+	right: 0;
+	text-align: center;
+}
+
+.container .leftmenu,.container .centermenu,.container .rightmenu {
+	display: block;
 }
 
 #cssmenu {
@@ -539,4 +580,138 @@ input[type=radio]:checked::after {
 #cssmenu ul ul>li:hover::after,#cssmenu ul ul>li.active::after,#cssmenu ul ul>li.open::after
 	{
 	border-top-color: #666666;
+}
+
+/*
+* For Table
+*/
+.table {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	/* bring your own prefixes */
+	transform: translate(-50%, -50%);
+	text-align: center;
+	padding: 0px;
+	width: auto;
+	box-shadow: 10px 10px 5px #888888;
+	border: 1px solid #000000;
+	-moz-border-radius-bottomleft: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	-moz-border-radius-bottomright: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+	-moz-border-radius-topright: 0px;
+	-webkit-border-top-right-radius: 0px;
+	border-top-right-radius: 0px;
+	-moz-border-radius-topleft: 0px;
+	-webkit-border-top-left-radius: 0px;
+	border-top-left-radius: 0px;
+}
+
+.table table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 90%;
+	height: 90%;
+	margin: 20px;
+	padding: 0px;
+}
+
+.table tr:last-child td:last-child {
+	-moz-border-radius-bottomright: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+.table table tr:first-child td:first-child {
+	-moz-border-radius-topleft: 0px;
+	-webkit-border-top-left-radius: 0px;
+	border-top-left-radius: 0px;
+}
+
+.table table tr:first-child td:last-child {
+	-moz-border-radius-topright: 0px;
+	-webkit-border-top-right-radius: 0px;
+	border-top-right-radius: 0px;
+}
+
+.table tr:last-child td:first-child {
+	-moz-border-radius-bottomleft: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+
+.table tr:hover td {
+	background-color: #ffffff;
+}
+
+.table td {
+	vertical-align: middle;
+	background: -o-linear-gradient(bottom, #7fc8db 5%, #ffffff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #7fc8db
+		), color-stop(1, #ffffff));
+	background: -moz-linear-gradient(center top, #7fc8db 5%, #ffffff 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#7fc8db",
+		endColorstr="#ffffff");
+	background: -o-linear-gradient(top, #7fc8db, ffffff);
+	background-color: #7fc8db;
+	border: 1px solid #000000;
+	border-width: 0px 1px 1px 0px;
+	text-align: left;
+	padding: 7px;
+	font-size: 10px;
+	font-family: Arial;
+	font-weight: normal;
+	color: #000000;
+}
+
+.table tr:last-child td {
+	border-width: 0px 1px 0px 0px;
+}
+
+.table tr td:last-child {
+	border-width: 0px 0px 1px 0px;
+}
+
+.table tr:last-child td:last-child {
+	border-width: 0px 0px 0px 0px;
+}
+
+.table tr:first-child td {
+	background: -o-linear-gradient(bottom, #0f1314 5%, #0c0c0c 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0f1314
+		), color-stop(1, #0c0c0c));
+	background: -moz-linear-gradient(center top, #0f1314 5%, #0c0c0c 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0f1314",
+		endColorstr="#0c0c0c");
+	background: -o-linear-gradient(top, #0f1314, 0c0c0c);
+	background-color: #0f1314;
+	border: 0px solid #000000;
+	text-align: center;
+	border-width: 0px 0px 1px 1px;
+	font-size: 14px;
+	font-family: Arial;
+	font-weight: bold;
+	color: #ffffff;
+}
+
+.table tr:first-child:hover td {
+	background: -o-linear-gradient(bottom, #0f1314 5%, #0c0c0c 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0f1314
+		), color-stop(1, #0c0c0c));
+	background: -moz-linear-gradient(center top, #0f1314 5%, #0c0c0c 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0f1314",
+		endColorstr="#0c0c0c");
+	background: -o-linear-gradient(top, #0f1314, 0c0c0c);
+	background-color: #0f1314;
+}
+
+.table tr:first-child td:first-child {
+	border-width: 0px 0px 1px 0px;
+}
+
+.table tr:first-child td:last-child {
+	border-width: 0px 0px 1px 1px;
 }

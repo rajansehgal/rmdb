@@ -5,14 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import rajan.springmvc.moviesdb.persistence.User;
 import rajan.springmvc.moviesdb.service.UserService;
@@ -60,5 +63,12 @@ public class UserController {
 		model.addAttribute("categories", mapCat);
 
 		return "moviesdb/userHome";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/userHome/getMediaDetails")
+	public void displayFileDetails(ModelAndView mv,HttpServletRequest req){
+		System.out.println("I am at UC, getting File Details for "+req.getHeader("MediaName"));
+		mv.addObject(userService.getMediaDetails(req.getHeader("MediaName")));
+		
 	}
 }

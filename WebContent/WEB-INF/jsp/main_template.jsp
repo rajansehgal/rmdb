@@ -8,12 +8,9 @@
 </head>
 
 <body>
-	<div id="container">
-		<div id="header">
-			<t:insertAttribute name="header" />
-			<!--<co id="co_tile_top" />-->
-		</div>
-		<div id="left">
+	<div class="container">
+	<div style="clear:both;"></div>
+			<div id="left">
 			<t:insertAttribute name="left" />
 			<!--<co id="co_tile_side" />-->
 		</div>
@@ -21,11 +18,7 @@
 			<t:insertAttribute name="right" />
 			<!--<co id="co_tile_side" />-->
 		</div>
-		<div id="footer">
-			<t:insertAttribute name="footer" />
-			<!--<co id="co_tile_side" />-->
-		</div>
-		<div id="centre">
+			<div id="centre">
 			<t:insertAttribute name="centre" />
 			<!--<co id="co_tile_content" />-->
 		</div>

@@ -5,7 +5,7 @@
 
 		document.getElementById("userNameNew").value = "/moviesdb/"
 				+ document.getElementById("username").value;
-		return true
+		return true;
 	}
 </script>
 

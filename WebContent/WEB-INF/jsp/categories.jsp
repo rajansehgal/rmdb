@@ -11,7 +11,7 @@
 <script>
 $(document).ready(function(){
     $("#cssmenu li.has-sub>a").click(function(){
-        $(this).removeAttr('href');
+    	$(this).removeAttr('href');
 		var element = $(this).parent('li');
 		if (element.hasClass('open')) {
 			element.removeClass('open');
@@ -30,7 +30,42 @@ $(document).ready(function(){
 });
 </script>
 
-<div id="leftmenu">
+<script>
+
+function getMedia(name)
+{
+	var fullurl="http://localhost:8080/MoviesDBatRS/moviesdb/userHome/getMediaDetails";
+    //Creating a new XMLHttpRequest object
+    var xmlhttp;
+    if (window.XMLHttpRequest){
+        xmlhttp = new XMLHttpRequest(); //for IE7+, Firefox, Chrome, Opera, Safari
+    } else {
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); //for IE6, IE5
+    }
+    //Create a asynchronous GET request
+    
+    xmlhttp.open("GET", fullurl, true);
+    xmlhttp.setRequestHeader("MediaName", name);
+    
+    //When readyState is 4 then get the server output
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4) {
+            if (xmlhttp.status == 200)
+            {
+                alert('All is Well');
+            }
+            else
+            {
+                alert('Something is wrong !!'+xmlhttp.readyState+xmlhttp.getAllResponseHeaders());
+            }
+        }
+    };
+     
+    xmlhttp.send(null);
+}
+</script>
+
+<div class="leftmenu">
 <div id="cssmenu">
 	<ul>
 		<li class='active'><a href='/MoviesDBatRS/moviesdb/userHome'>Home</a></li>
@@ -40,7 +75,7 @@ $(document).ready(function(){
 			<li class='has-sub'><a href="#"><c:out value="${category.key}" /></a>
 				<c:forEach var="subcategory" items="${category.value}">
 					<ul>
-						<li><a href="#"><c:out value="${subcategory}" /></a>
+						<li><a href="#" onclick='getMedia("${subcategory}")'><c:out value="${subcategory}" /></a>
 					</ul>
 				</c:forEach>
 				</li>
