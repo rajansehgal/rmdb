@@ -45,7 +45,7 @@ function getMedia(name)
     //Create a asynchronous GET request
     
     xmlhttp.open("GET", fullurl, true);
-    xmlhttp.setRequestHeader("MediaName", name);
+    xmlhttp.setRequestHeader("mediaName", name);
     
     //When readyState is 4 then get the server output
     xmlhttp.onreadystatechange = function() {
@@ -64,6 +64,33 @@ function getMedia(name)
     xmlhttp.send(null);
 }
 </script>
+<script>
+function getMedia2(name)
+{
+	$.ajax({
+		type: 'GET',
+		url: 'http://localhost:8080/MoviesDBatRS/moviesdb/userHome/getMediaDetails',
+		data: {'mediaName': name},
+		headers: {Accept: 'application/json'},
+		dataType: 'json',
+		
+		
+		
+		success:function(data){
+			alert('It Worked'+data);
+			$.each(data, function(index, element) {
+	            
+	               alert( ''+element.name);
+	            
+	        });
+		},
+		
+		error:function(data){
+			alert('It failed');
+		}
+	});
+}
+</script>
 
 <div class="leftmenu">
 <div id="cssmenu">
@@ -75,7 +102,7 @@ function getMedia(name)
 			<li class='has-sub'><a href="#"><c:out value="${category.key}" /></a>
 				<c:forEach var="subcategory" items="${category.value}">
 					<ul>
-						<li><a href="#" onclick='getMedia("${subcategory}")'><c:out value="${subcategory}" /></a>
+						<li><a href="#" onclick='getMedia2("${subcategory}")'><c:out value="${subcategory}" /></a>
 					</ul>
 				</c:forEach>
 				</li>
