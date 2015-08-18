@@ -1,7 +1,6 @@
 package rajan.springmvc.moviesdb.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -90,15 +88,9 @@ public class UserController {
 		
 		
 		ObjectMapper mapper = new ObjectMapper();
-        //Map<String, String> nameStruct = new HashMap<String, String>();
-        //nameStruct.put("first", "Joe");
-        //nameStruct.put("last", "Sixpack");
-        Map<String, Object> userData = new HashMap<String, Object>();
-        userData.put("fileName", "ABC");
-        userData.put("parentDir", "DEF");
-        userData.put("hasSubtitles", Boolean.TRUE);
-        userData.put("fileSize", Integer.valueOf(223));
-        String jsonString = mapper.writeValueAsString(userData);
+		Object userData = userService.getMediaDetails(request.getParameter("mediaName"));
+		String jsonString = mapper.writeValueAsString(userService.getMediaDetails(request.getParameter("mediaName")));
+		
  
         AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();
         MediaType jsonMimeType = MediaType.APPLICATION_JSON;
