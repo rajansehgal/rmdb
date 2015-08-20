@@ -7,6 +7,8 @@
 <script type="text/javascript"
 	src="<c:url value="/resources/javascripts/jquery-latest.min.js" />"></script>
 
+<script type="text/javascript"
+	src="<c:url value="/resources/javascripts/jquery.dataTables.min.js" />"></script>
 
 
 <script>
@@ -28,40 +30,20 @@
 			}
 		});
 	});
-</script>
 
-<script>
-	function getMedia(name) {
-		var fullurl = "http://localhost:8080/MoviesDBatRS/moviesdb/userHome/getMediaDetails";
-		//Creating a new XMLHttpRequest object
-		var xmlhttp;
-		if (window.XMLHttpRequest) {
-			xmlhttp = new XMLHttpRequest(); //for IE7+, Firefox, Chrome, Opera, Safari
-		} else {
-			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); //for IE6, IE5
-		}
-		//Create a asynchronous GET request
+	$(document).ready(function() {
+		$("#cssmenu ul ul li a").click(function() {
+			$('#abc').empty();
+			getMediaDetails($(this).html());
+		});
+	});
 
-		xmlhttp.open("GET", fullurl, true);
-		xmlhttp.setRequestHeader("mediaName", name);
+	function formatTable() {
+		$('#myTable').DataTable();
 
-		//When readyState is 4 then get the server output
-		xmlhttp.onreadystatechange = function() {
-			if (xmlhttp.readyState == 4) {
-				if (xmlhttp.status == 200) {
-					alert('All is Well');
-				} else {
-					alert('Something is wrong !!' + xmlhttp.readyState
-							+ xmlhttp.getAllResponseHeaders());
-				}
-			}
-		};
-
-		xmlhttp.send(null);
 	}
-</script>
-<script>
-	function getMedia2(name) {
+
+	function getMediaDetails(name) {
 		$
 				.ajax({
 					type : 'GET',
@@ -75,19 +57,20 @@
 					dataType : 'json',
 
 					success : function(data) {
-						alert('It Worked' + data);
-
-						var rowHeader='<tr><th>File Name</th><th>Parent Directory</th><th>Subtitles(Y/N)</th><th>File Size(Mb)</th></tr>';
-						$('table').append(rowHeader);
+						var tableHolder = '<table id="myTable" class="display"><thead><tr><th>File Name</th><th>Parent Directory</th><th>Subtitles(Y/N)</th><th>File Size(Mb)</th></tr></thead><tbody>';
+	
 						$.each(data, function(index, val) {
-							var rowData = '';
-							rowData += '<tr><td>' + val.fileName + '</td><td>'
-									+ val.parentDir + '</td><td>'
-									+ val.hasSubtitles + '</td></tr>'
-									+ val.fileSize + '</td><td>';
-							$('table').append(rowData);
+
+							tableHolder += '<tr><td>' + val.fileName
+									+ '</td><td>' + val.parentDir + '</td><td>'
+									+ val.hasSubtitles + '</td><td>'
+									+ val.fileSize + '</td></tr>';
+	
 
 						});
+						tableHolder += '</tbody></table>';
+						$('#abc').append(tableHolder);
+						formatTable();
 
 					},
 
@@ -98,27 +81,28 @@
 	}
 </script>
 
-<div class="leftmenu">
-	<div id="cssmenu">
+
+
+<div id="cssmenu">
+	<ul>
+		<li class='active'><a href='/MoviesDBatRS/moviesdb/userHome'>Home</a></li>
+	</ul>
+	<c:forEach var="category" items="${categories}">
 		<ul>
-			<li class='active'><a href='/MoviesDBatRS/moviesdb/userHome'>Home</a></li>
+			<li class='has-sub'><a href="#"><c:out
+						value="${category.key}" /></a> <c:forEach var="subcategory"
+					items="${category.value}">
+					<ul>
+						<li><a href="#"><c:out value="${subcategory}" /></a>
+					</ul>
+				</c:forEach></li>
 		</ul>
-		<c:forEach var="category" items="${categories}">
-			<ul>
-				<li class='has-sub'><a href="#"><c:out
-							value="${category.key}" /></a> <c:forEach var="subcategory"
-						items="${category.value}">
-						<ul>
-							<li><a href="#" onclick='getMedia2("${subcategory}")'><c:out
-										value="${subcategory}" /></a>
-						</ul>
-					</c:forEach></li>
-			</ul>
-		</c:forEach>
-	</div>
+	</c:forEach>
 </div>
-<div class="centrepanel">
-	<table>
-	
+<div id="abc" class="moviepanel">
+	<table id="myTable" class="display">
 	</table>
 </div>
+
+
+

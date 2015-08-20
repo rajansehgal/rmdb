@@ -10,18 +10,17 @@
 <body>
 	<div class="container">
 	<div style="clear:both;"></div>
-			<div id="left">
+			<div id="left" class="leftpanel" style="background-color: white;">
 			<t:insertAttribute name="left" />
 			<!--<co id="co_tile_side" />-->
 		</div>
-		<div id="right">
+		<div id="right" class="rightpanel">
 			<t:insertAttribute name="right" />
 			<!--<co id="co_tile_side" />-->
 		</div>
-			<div id="centre">
-			<t:insertAttribute name="centre" />
-			<!--<co id="co_tile_content" />-->
-		</div>
+<!-- 			<div id="centre" class="centrepanel"> -->
+<%-- 			<t:insertAttribute name="centre" /> --%>
+<!-- 		</div> -->
 	</div>
 </body>
 </html>

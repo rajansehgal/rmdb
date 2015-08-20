@@ -21,7 +21,7 @@ public class HomeController {
 	public String showHomePage(Map<String, Object> model) {
 		System.out.println("I am at HC");
 		model.put("moviesdb", new String("Home"));
-		return "template";
+		return "user_template";
 	}
 	
 }

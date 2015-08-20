@@ -3,30 +3,32 @@
 "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 
 <tiles-definitions>
-	<definition name="template" template="/WEB-INF/jsp/main_template.jsp">
-		<put-attribute name="left" value="" />
-		<put-attribute name="right" value="" />
-		<put-attribute name="footer" value="" />
+	<definition name="user_template" template="/WEB-INF/jsp/user_template.jsp">
 		<put-attribute name="centre" value="/WEB-INF/jsp/login.jsp"></put-attribute>
 	</definition>
+	
+	<definition name="main_template" template="/WEB-INF/jsp/main_template.jsp">
+		<put-attribute name="left" value="" />
+		<put-attribute name="right" value="" />
+	</definition>
 
-	<definition name="moviesdb/regForm" extends="template">
+	<definition name="moviesdb/regForm" extends="user_template">
 		<put-attribute name="centre" value="/WEB-INF/jsp/regForm.jsp" />
 	</definition>
 	
-		<definition name="moviesdb/welcomePage" extends="template">
+		<definition name="moviesdb/welcomePage" extends="user_template">
 		<put-attribute name="centre" value="/WEB-INF/jsp/welcome.jsp" />
 	</definition>
 	
 
-	<definition name="moviesdb/userHome" extends="template">
+	<definition name="moviesdb/userHome" extends="main_template">
 	<put-attribute name="left" value="/WEB-INF/jsp/categories.jsp" />
-		<put-attribute name="centre" value="" />
+		
 		<put-attribute name="right" value="/WEB-INF/jsp/adminMenu.jsp" />
 	</definition>
 
 
-<!-- 	<definition name="spitters/regForm" extends="template"> -->
+<!-- 	<definition name="spitters/regForm" extends="main_template"> -->
 <!-- 		<put-attribute name="content" value="/WEB-INF/jsp/regForm.jsp" /> -->
 <!-- 		<put-attribute name="top" value="" /> -->
 <!-- 		<put-attribute name="side" value="" /> -->
