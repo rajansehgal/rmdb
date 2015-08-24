@@ -13,7 +13,7 @@
 
 <script>
 	$(document).ready(function() {
-		$("#cssmenu li.has-sub>a").click(function() {
+		$(".leftmenu li.has-sub>a").click(function() {
 			$(this).removeAttr('href');
 			var element = $(this).parent('li');
 			if (element.hasClass('open')) {
@@ -32,22 +32,16 @@
 	});
 
 	$(document).ready(function() {
-		$("#cssmenu ul ul li a").click(function() {
+		$(".leftmenu ul ul li a").click(function() {
 			$('#abc').empty();
 			getMediaDetails($(this).html());
 		});
 	});
 
-	function formatTable() {
-		$('#myTable').DataTable();
-
-	}
-
 	function getMediaDetails(name) {
-		$
-				.ajax({
+		$.ajax({
 					type : 'GET',
-					url : 'http://localhost:8080/MoviesDBatRS/moviesdb/userHome/getMediaDetails',
+					url : location.origin+"${pageContext.request.contextPath}"+'/moviesdb/media/getMediaDetails',
 					data : {
 						'mediaName' : name
 					},
@@ -58,19 +52,26 @@
 
 					success : function(data) {
 						var tableHolder = '<table id="myTable" class="display"><thead><tr><th>File Name</th><th>Parent Directory</th><th>Subtitles(Y/N)</th><th>File Size(Mb)</th></tr></thead><tbody>';
-	
+
 						$.each(data, function(index, val) {
+							var subDisplay=(val.hasSubtitles==true)?'Y':'N';
 
 							tableHolder += '<tr><td>' + val.fileName
 									+ '</td><td>' + val.parentDir + '</td><td>'
-									+ val.hasSubtitles + '</td><td>'
+									+ subDisplay + '</td><td>'
 									+ val.fileSize + '</td></tr>';
-	
 
 						});
 						tableHolder += '</tbody></table>';
 						$('#abc').append(tableHolder);
-						formatTable();
+						$('#myTable').DataTable({
+							scrollY: 300,
+							"scrollCollapse": true,
+							"scrollX": false,
+							"lengthMenu": [[ 10, 25, 50, 75, 100, -1 ],[ 10, 25, 50, 75, 100, "All" ]],
+							"pagingType": "full_numbers"
+						});
+						$('#abc').css("background-color","white");
 
 					},
 
@@ -79,29 +80,37 @@
 					}
 				});
 	}
+	
 </script>
 
 
 
-<div id="cssmenu">
+<div class="leftpanel">
+<div class="leftmenu">
 	<ul>
 		<li class='active'><a href='/MoviesDBatRS/moviesdb/userHome'>Home</a></li>
 	</ul>
 	<c:forEach var="category" items="${categories}">
 		<ul>
-			<li class='has-sub'><a href="#"><c:out
+			<li class='has-sub'><a id="Parent" href="#"><c:out
 						value="${category.key}" /></a> <c:forEach var="subcategory"
 					items="${category.value}">
 					<ul>
-						<li><a href="#"><c:out value="${subcategory}" /></a>
+						<li><a id="Child" href="#"><c:out value="${subcategory}" /></a>
 					</ul>
 				</c:forEach></li>
 		</ul>
 	</c:forEach>
 </div>
+</div>
+<div class="middlepanel">
+<div class="headerpanel">
+	<h1>Welcome to RMDb</h1>
+</div>
 <div id="abc" class="moviepanel">
 	<table id="myTable" class="display">
 	</table>
+</div>
 </div>
 
 

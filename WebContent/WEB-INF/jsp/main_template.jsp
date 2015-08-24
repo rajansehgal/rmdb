@@ -7,16 +7,13 @@
 	rel="stylesheet" type="text/css" />
 </head>
 
-<body>
+<body style="background-color: white;">
 	<div class="container">
-	<div style="clear:both;"></div>
-			<div id="left" class="leftpanel" style="background-color: white;">
+			<div id="left">
 			<t:insertAttribute name="left" />
-			<!--<co id="co_tile_side" />-->
 		</div>
 		<div id="right" class="rightpanel">
 			<t:insertAttribute name="right" />
-			<!--<co id="co_tile_side" />-->
 		</div>
 <!-- 			<div id="centre" class="centrepanel"> -->
 <%-- 			<t:insertAttribute name="centre" /> --%>

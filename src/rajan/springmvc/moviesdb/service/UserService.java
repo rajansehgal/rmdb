@@ -2,8 +2,7 @@ package rajan.springmvc.moviesdb.service;
 
 import java.util.List;
 
-import rajan.springmvc.moviesdb.persistence.FileDetails;
-import rajan.springmvc.moviesdb.persistence.User;
+import rajan.springmvc.moviesdb.dto.User;
 
 public interface UserService {
 
@@ -11,5 +10,5 @@ public interface UserService {
 	User getUserInfo(String username);
 	List<String> getMainListing();
 	List<String> getSubListing(String mainDir);
-	List<FileDetails> getMediaDetails(String mediaType);
+
 }
