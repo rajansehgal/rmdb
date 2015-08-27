@@ -32,7 +32,6 @@ public class AdminDaoImpl implements AdminDao {
 	@Override
 	public List<User> getPendingUsers() {
 		Session session = currentSession();
-		System.out.println("Got Current Session");
 		Criteria criteria = session.createCriteria(User.class);
 		Criterion status = Restrictions.eq("approved", false);
 		Criterion role = Restrictions.isNull("role");
@@ -41,6 +40,25 @@ public class AdminDaoImpl implements AdminDao {
 		@SuppressWarnings("unchecked")
 		final List<User> finalList = criteria.list();
 
+		return finalList;
+	}
+
+	@Override
+	public void enableInactiveUsers(int id, String role) {
+				
+		Session session = currentSession();
+		User userToActivate = (User) session.get(User.class, (long) id);
+		userToActivate.setRole(role);
+		userToActivate.setApproved(true);
+		session.saveOrUpdate(userToActivate);
+	}
+
+	@Override
+	public List<User> getAllUsers() {
+		Session session = currentSession();
+		Criteria criteria = session.createCriteria(User.class);
+		@SuppressWarnings("unchecked")
+		final List<User> finalList = criteria.list();
 		return finalList;
 	}
 

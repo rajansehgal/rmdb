@@ -7,4 +7,6 @@ import rajan.springmvc.moviesdb.dto.User;
 public interface AdminService {
 
 	List<User> getPendingUsers();
+	List<User> getAllUsers();
+	boolean enableInactiveUsers(String[] userList);
 }
