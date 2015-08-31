@@ -1,5 +1,6 @@
 package rajan.springmvc.moviesdb.controller;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.Resource;
@@ -95,6 +96,44 @@ public class AdminController {
 		
 		 ObjectMapper mapper = new ObjectMapper();
 		 Object userData = new String(((adminService.enableInactiveUsers(userList))?"User(s) Updated Successfully":" User(s) Update Failed"));
+		 String jsonString = mapper.writeValueAsString(userData);
+		 
+		    AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();
+		    MediaType jsonMimeType = MediaType.APPLICATION_JSON;
+		    if (stringHttpMessageConverter.canWrite(String.class, jsonMimeType)) {
+		        try {
+		            stringHttpMessageConverter.write(jsonString, jsonMimeType, new ServletServerHttpResponse(response));
+		        } catch (IOException m_Ioe) {
+		        } catch (HttpMessageNotWritableException p_Nwe) {
+		        }
+		    }
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/syncDbwithHD")
+	public void syncHDtoLocalDb(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		System.out.println("I am at AC, updating Db");
+		response.setContentType("application/json");
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+		
+        File currDir = new File("H:\\Media & Entertainment");
+        String msg="";
+		
+		if (currDir.canRead()){
+			long startTime=System.nanoTime();
+			adminService.syncDbwithHD(currDir);
+			msg="Time Taken is: "+(System.nanoTime()-startTime)/1000000;
+			
+		} else {
+			msg="HD not connected";
+		}
+		
+		 ObjectMapper mapper = new ObjectMapper();
+		 Object userData = new String(msg);
 		 String jsonString = mapper.writeValueAsString(userData);
 		 
 		    AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();

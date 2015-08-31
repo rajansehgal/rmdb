@@ -324,6 +324,35 @@
 											
 										});
 					});
+	
+	function updateDb(){
+		alert('Updating Db');
+		$
+		.ajax({
+			type : 'GET',
+			url : location.origin
+					+ "${pageContext.request.contextPath}"
+					+ '/moviesdb/admin/syncDbwithHD',
+			headers : {
+				Accept : 'application/json'
+			},
+			dataType : 'json',
+
+			success : function(data) {
+			alert(data);
+			$('#abc').empty();
+			$('#abc')
+			.append(data);
+			},
+
+			error : function(data) {
+				alert('It failed');
+			}
+		});
+
+
+	}
+	
 	$(document)
 	.ready(
 			function() {
@@ -336,6 +365,19 @@
 									
 								});
 			});
+	
+	$(document)
+	.ready(
+			function() {
+				$("#syncHD")
+						.click(
+								function() {
+
+									$('#abc').empty();
+									updateDb();
+									
+								});
+			});
 </script>
 
 <div class="rightmenu">
@@ -343,7 +385,7 @@
 		<li><a href='#'><span>My Profile</span></a></li>
 		<li class='active has-sub'><a href='#'><span>Administration</span></a>
 			<ul>
-				<li><a href='#'><span>Sync HD</span></a></li>
+				<li><a href='#' id="syncHD"><span>Sync HD</span></a></li>
 				<li><a href='#'><span>Sync Db</span></a></li>
 			</ul></li>
 		<li class='active has-sub'><a href='#'><span>User
