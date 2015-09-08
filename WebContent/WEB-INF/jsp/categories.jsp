@@ -12,6 +12,51 @@
 
 
 <script>
+	
+	function getMediaDetails(name) {
+		$.ajax({
+			 type : 'GET',
+					url : location.origin+"${pageContext.request.contextPath}"+'/moviesdb/media/getMediaDetails',
+					data : {
+						'mediaName' : name
+					},
+					headers : {
+						Accept : 'application/json'
+					},
+					dataType : 'json',
+
+					success : function(data) {
+						var tableHolder = '<table id="myTable" class="display"><thead><tr><th>Display Name</th><th>Parent Directory</th><th>Subtitles(Y/N)</th><th>File Size(Mb)</th></tr></thead><tbody>';
+
+						$.each(data, function(index, val) {
+							var subDisplay=(val.hasSubtitles==true)?'Y':'N';
+
+							tableHolder += '<tr><td>' + val.displayName
+									+ '</td><td>' + val.parentDir + '</td><td>'
+									+ subDisplay + '</td><td>'
+									+ val.fileSize + '</td></tr>';
+
+						});
+						tableHolder += '</tbody></table>';
+						$('#abc').empty();
+						$('#abc').append(tableHolder);
+						$('#myTable').DataTable({
+							scrollY: 300,
+							"scrollCollapse": true,
+							"scrollX": false,
+							"lengthMenu": [[ 10, 25, 50, 75, 100, -1 ],[ 10, 25, 50, 75, 100, "All" ]],
+							"pagingType": "full_numbers"
+						});
+						$('#abc').css("background-color","white");
+
+					},
+
+					error : function(data) {
+						alert('It failed');
+					}
+				});
+	}
+	
 	$(document).ready(function() {
 		$(".leftmenu li.has-sub>a").click(function() {
 			$(this).removeAttr('href');
@@ -34,52 +79,10 @@
 	$(document).ready(function() {
 		$(".leftmenu ul ul li a").click(function() {
 			$('#abc').empty();
+			$('#abc').append('<a class="progressbar"><a>');
 			getMediaDetails($(this).html());
 		});
 	});
-
-	function getMediaDetails(name) {
-		$.ajax({
-					type : 'GET',
-					url : location.origin+"${pageContext.request.contextPath}"+'/moviesdb/media/getMediaDetails',
-					data : {
-						'mediaName' : name
-					},
-					headers : {
-						Accept : 'application/json'
-					},
-					dataType : 'json',
-
-					success : function(data) {
-						var tableHolder = '<table id="myTable" class="display"><thead><tr><th>File Name</th><th>Parent Directory</th><th>Subtitles(Y/N)</th><th>File Size(Mb)</th></tr></thead><tbody>';
-
-						$.each(data, function(index, val) {
-							var subDisplay=(val.hasSubtitles==true)?'Y':'N';
-
-							tableHolder += '<tr><td>' + val.fileName
-									+ '</td><td>' + val.parentDir + '</td><td>'
-									+ subDisplay + '</td><td>'
-									+ val.fileSize + '</td></tr>';
-
-						});
-						tableHolder += '</tbody></table>';
-						$('#abc').append(tableHolder);
-						$('#myTable').DataTable({
-							scrollY: 300,
-							"scrollCollapse": true,
-							"scrollX": false,
-							"lengthMenu": [[ 10, 25, 50, 75, 100, -1 ],[ 10, 25, 50, 75, 100, "All" ]],
-							"pagingType": "full_numbers"
-						});
-						$('#abc').css("background-color","white");
-
-					},
-
-					error : function(data) {
-						alert('It failed');
-					}
-				});
-	}
 	
 </script>
 
@@ -110,6 +113,7 @@
 <div id="abc" class="moviepanel">
 	<table id="myTable" class="display">
 	</table>
+	
 </div>
 </div>
 

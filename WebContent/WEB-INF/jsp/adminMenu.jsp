@@ -29,25 +29,26 @@
 			}
 		});
 	});
-	
-	function enableSelected(rowSelected){
-		alert('Calling for '+rowSelected);
-		$
-		.ajax({
+
+	function enableSelected(rowSelected) {
+		alert('Calling for ' + rowSelected);
+		$.ajax({
 			type : 'GET',
-			url : location.origin
-					+ "${pageContext.request.contextPath}"
+			url : location.origin + "${pageContext.request.contextPath}"
 					+ '/moviesdb/admin/enableUsers',
-			data: {userList : rowSelected},
+			data : {
+				userList : rowSelected
+			},
 			headers : {
 				Accept : 'application/json'
 			},
 			dataType : 'json',
 
 			success : function(data) {
-			alert(data);
-			$('#abc').empty();
-			displayDisabledUsers();
+				alert(data);
+				$('#abc').empty();
+				$('#abc').append('<a class="progressbar"><a>');
+				displayDisabledUsers();
 			},
 
 			error : function(data) {
@@ -55,96 +56,106 @@
 			}
 		});
 
-
 	}
 
-	function displayDisabledUsers() {
-
-		$
-		.ajax({
+	function updateSelected(rowSelected, actionType) {
+		alert('Calling for ' + rowSelected + ' and ' + actionType);
+		$('#abc').empty();
+		$('#abc').append('<a class="progressbar"><a>');
+		$.ajax({
 			type : 'GET',
-			url : location.origin
-					+ "${pageContext.request.contextPath}"
-					+ '/moviesdb/admin/disabledUsers',
+			url : location.origin + "${pageContext.request.contextPath}"
+					+ '/moviesdb/admin/updateUser',
+			data : {
+				userSelected : rowSelected,
+				userAction : actionType
+			},
 			headers : {
 				Accept : 'application/json'
 			},
 			dataType : 'json',
 
 			success : function(data) {
-				var tableHolder = '<table id="myTable" class="display select"><thead><tr><th><input name="select_all" value="1" id="example-select-all" type="checkbox" class="dt-body-center"></th><th>Username</th><th>Full name</th><th>Email</th><th>Role</th></tr></thead><tbody>';
+				alert(data);
+				$('#abc').empty();
+				$('#abc').append('<a class="progressbar"><a>');
+				displayAllUsers();
+			},
 
-				$
-						.each(
-								data,
-								function(
-										index,
-										val) {
-									tableHolder += '<tr><td><input type="checkbox" id="userRow" name="u_select" class="dt-body-center" value="'+val.id+'"></td><td>'
-											+ val.username
-											+ '</td><td>'
-											+ val.fullName
-											+ '</td><td>'
-											+ val.email
-											+ '</td><td><select id="user_role" class="user_role"><option value="USER" selected="selected">USER</option><option value="ADMIN">ADMIN</option></select></td></tr>';
+			error : function(data) {
+				alert('It failed');
+			}
+		});
 
-								});
-				tableHolder += '</tbody></table>';
-				var approveButton = '<input type="submit" id="appButton" value="Approve"/>';
+	}
 
-				$('#abc')
-						.append(
-								tableHolder);
-				$('#abc')
-						.append(
-								approveButton);
+	function displayDisabledUsers() {
 
-				var table = $(
-						'#myTable')
-						.DataTable(
-								{
-									scrollY : 200,
-									"scrollCollapse" : true,
-									"scrollX" : false,
-									paging : false,
-									searching : false,
-									"ordering" : false
-								});
-				// Handle click on "Select all" control
-				$(
-						'#example-select-all')
-						.click(
+		$
+				.ajax({
+					type : 'GET',
+					url : location.origin
+							+ "${pageContext.request.contextPath}"
+							+ '/moviesdb/admin/disabledUsers',
+					headers : {
+						Accept : 'application/json'
+					},
+					dataType : 'json',
+
+					success : function(data) {
+						var tableHolder = '<table id="myTable" class="display select"><thead><tr><th><input name="select_all" value="1" id="example-select-all" type="checkbox" class="dt-body-center"></th><th>Username</th><th>Full name</th><th>Email</th><th>Role</th></tr></thead><tbody>';
+
+						$
+								.each(
+										data,
+										function(index, val) {
+											tableHolder += '<tr><td><input type="checkbox" id="userRow" name="u_select" class="dt-body-center" value="'+val.id+'"></td><td>'
+													+ val.username
+													+ '</td><td>'
+													+ val.fullName
+													+ '</td><td>'
+													+ val.email
+													+ '</td><td><select id="user_role" class="user_role"><option value="USER" selected="selected">USER</option><option value="ADMIN">ADMIN</option></select></td></tr>';
+
+										});
+						tableHolder += '</tbody></table>';
+						var approveButton = '<input type="submit" id="appButton" value="Approve"/>';
+						$('#abc').empty();
+
+						$('#abc').append(tableHolder);
+						$('#abc').append(approveButton);
+
+						var table = $('#myTable').DataTable({
+							scrollY : 200,
+							"scrollCollapse" : true,
+							"scrollX" : false,
+							paging : false,
+							searching : false,
+							"ordering" : false
+						});
+						// Handle click on "Select all" control
+						$('#example-select-all').click(
 								function() {
 									// Get all rows with search applied
-									var rows = table
-											.rows()
-											.nodes();
+									var rows = table.rows().nodes();
 									// Check/uncheck checkboxes for all rows in the table
-									$(
-											'input[type="checkbox"]',
-											rows)
-											.prop(
-													'checked',
-													this.checked);
+									$('input[type="checkbox"]', rows).prop(
+											'checked', this.checked);
 
 								});
 
-				// Handle click on checkbox to set state of "Select all" control
-				$('#myTable tbody')
-						.on(
+						// Handle click on checkbox to set state of "Select all" control
+						$('#myTable tbody').on(
 								'change',
 								'input[type="checkbox"]',
 								function() {
 									// If checkbox is not checked
 
 									if (!this.checked) {
-										var el = $(
-												'#example-select-all')
-												.get(
-														0);
+										var el = $('#example-select-all')
+												.get(0);
 										// If "Select all" control is checked and has 'indeterminate' property
-										if (el
-												&& el.checked
+										if (el && el.checked
 												&& ('indeterminate' in el)) {
 											// Set visual state of "Select all" control 
 											// as 'indeterminate'
@@ -153,185 +164,214 @@
 									}
 								});
 
-				$('#appButton')
-						.click(
-								function() {
-									var rowSelected = [];
-									var row = '';
+						$('#appButton')
+								.click(
+										function() {
+											var rowSelected = [];
+											var row = '';
 
-									// Iterate over all checkboxes in the table
-									table
-											.$(
-													'input[type="checkbox"]:checked')
-											.each(
-													function() {
-														row = $(
-																this)
-																.parent()
-																.parent();
-														rowSelected
-																.push(this.value
-																		+ ' : '
-																		+ row
-																				.find(
-																						'td:eq(4) option:selected')
-																				.val());
-														
+											// Iterate over all checkboxes in the table
+											table
+													.$(
+															'input[type="checkbox"]:checked')
+													.each(
+															function() {
+																row = $(this)
+																		.parent()
+																		.parent();
+																rowSelected
+																		.push(this.value
+																				+ ' : '
+																				+ row
+																						.find(
+																								'td:eq(4) option:selected')
+																						.val());
 
-													});
+															});
 
-									enableSelected(rowSelected);
-								});
+											if (rowSelected == '') {
+												alert('Please Select at least one Row to Enable');
+											} else {
 
-				$('#abc')
-						.css(
-								"background-color",
-								"white");
+												enableSelected(rowSelected);
+											}
+										});
 
-			},
+						$('#abc').css("background-color", "white");
 
-			error : function(data) {
-				alert('It failed');
-			}
-		});
+					},
+
+					error : function(data) {
+						alert('It failed');
+					}
+				});
 
 	}
-	
+
 	function displayAllUsers() {
 
 		$
-		.ajax({
-			type : 'GET',
-			url : location.origin
-					+ "${pageContext.request.contextPath}"
-					+ '/moviesdb/admin/AllUsers',
-			headers : {
-				Accept : 'application/json'
-			},
-			dataType : 'json',
+				.ajax({
+					type : 'GET',
+					url : location.origin
+							+ "${pageContext.request.contextPath}"
+							+ '/moviesdb/admin/AllUsers',
+					headers : {
+						Accept : 'application/json'
+					},
+					dataType : 'json',
 
-			success : function(data) {
-				var tableHolder = '<table id="myTable" class="display select"><thead><tr><th>Select</th><th>Username</th><th>Full name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead><tbody>';
+					success : function(data) {
+						var tableHolder = '<table id="myTable" class="display select"><thead><tr><th>Select</th><th>Username</th><th>Full name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead><tbody>';
 
-				$
-						.each(
-								data,
-								function(
-										index,
-										val) {
-									var status=(val.approved==true)?'Enabled':'Disabled';
-									tableHolder += '<tr><td><input type="radio" id="userRow" name="u_select" class="dt-body-center" value="'+val.id+'"></td><td>'
-											+ val.username
-											+ '</td><td>'
-											+ val.fullName
-											+ '</td><td>'
-											+ val.email
-											+ '</td><td>'+val.role+'</td><td>'+status+'</td></tr>';
+						$
+								.each(
+										data,
+										function(index, val) {
+											var status = (val.approved == true) ? 'Enabled'
+													: 'Disabled';
 
-								});
-				tableHolder += '</tbody></table>';
-				var editButton = '<input type="submit" id="appButton" value="Edit"/>';
-				var deleteButton = '<input type="submit" id="appButton" value="Delete"/>';
-				var disableButton = '<input type="submit" id="appButton" value="Disable"/>';
+											if (val.role == 'ROLE_USER') {
+												tableHolder += '<tr><td><input type="radio" id="userRow" name="u_select" class="dt-body-center" value="'+val.id+'"></td><td>'
+														+ val.username
+														+ '</td><td>'
+														+ val.fullName
+														+ '</td><td>'
+														+ val.email
+														+ '</td><td><select id="user_role" class="user_role"><option value="USER" selected="selected">USER</option><option value="ADMIN">ADMIN</option></select></td><td>'
+														+ status + '</td></tr>';
 
-				$('#abc')
-						.append(
-								tableHolder);
-				$('#abc')
-						.append(
-								editButton);
-				$('#abc')
-				.append("\t\t\t");
-				$('#abc')
-				.append("\t\t\t");
-				$('#abc')
-				.append(
-						deleteButton);
-				$('#abc')
-				.append("\t\t\t");
-				$('#abc')
-				.append("\t\t\t");
-				$('#abc')
-				.append(
-						disableButton);
+											} else {
+												tableHolder += '<tr><td><input type="radio" id="userRow" name="u_select" class="dt-body-center" value="'+val.id+'"></td><td>'
+														+ val.username
+														+ '</td><td>'
+														+ val.fullName
+														+ '</td><td>'
+														+ val.email
+														+ '</td><td><select id="user_role" class="user_role"><option value="ADMIN" selected="selected">ADMIN</option><option value="USER" >USER</option></select></td><td>'
+														+ status + '</td></tr>';
 
-				var table = $(
-						'#myTable')
-						.DataTable(
-								{
-									scrollY : 200,
-									"scrollCollapse" : true,
-									"scrollX" : false,
-									paging : false,
-									searching : false,
-									"ordering" : false
-								});
+											}
 
-				$('#appButton')
-						.click(
-								function() {
-									var rowSelected = [];
-									var row = '';
+										});
+						tableHolder += '</tbody></table>';
+						var editButton = '<input type="submit" id="updateButton" value="Update Role"/>';
+						var deleteButton = '<input type="submit" id="deleteButton" value="Delete"/>';
+						var disableButton = '<input type="submit" id="disableButton" value="Disable"/>';
 
-									// Iterate over all checkboxes in the table
-									table
-											.$(
-													'input[type="checkbox"]:checked')
-											.each(
-													function() {
-														row = $(
-																this)
-																.parent()
-																.parent();
-														rowSelected
-																.push(this.value
+						$('#abc').empty();
+						$('#abc').append(tableHolder);
+						$('#abc').append(editButton);
+						$('#abc').append("\t\t\t");
+						$('#abc').append("\t\t\t");
+						$('#abc').append(deleteButton);
+						$('#abc').append("\t\t\t");
+						$('#abc').append("\t\t\t");
+						$('#abc').append(disableButton);
+
+						var table = $('#myTable').DataTable({
+							scrollY : 200,
+							"scrollCollapse" : true,
+							"scrollX" : false,
+							paging : false,
+							searching : false,
+							"ordering" : false
+						});
+
+						$('#updateButton')
+								.click(
+										function() {
+											var rowSelected = '';
+											var row = '';
+											var actionType = this.value;
+
+											table
+													.$(
+															'input[type="radio"]:checked')
+													.each(
+															function() {
+																row = $(this)
+																		.parent()
+																		.parent();
+																rowSelected = this.value
 																		+ ' : '
 																		+ row
 																				.find(
 																						'td:eq(4) option:selected')
-																				.val());
-														
+																				.html();
+															});
+											if (rowSelected == '') {
+												alert('Please Select a Row to '
+														+ actionType);
+											} else {
 
-													});
+												updateSelected(rowSelected,
+														actionType);
+											}
+										});
 
-									enableSelected(rowSelected);
-								});
+						$('#deleteButton')
+								.click(
+										function() {
+											var rowSelected = '';
+											var actionType = this.value;
 
-				$('#abc')
-						.css(
-								"background-color",
-								"white");
+											table
+													.$(
+															'input[type="radio"]:checked')
+													.each(
+															function() {
+																rowSelected = this.value;
+															});
+											if (rowSelected == '') {
+												alert('Please Select a Row to '
+														+ actionType);
+											} else {
 
-			},
+												updateSelected(rowSelected,
+														actionType);
+											}
+										});
 
-			error : function(data) {
-				alert('It failed');
-			}
-		});
+						$('#disableButton')
+								.click(
+										function() {
+											var rowSelected = '';
+											var actionType = this.value;
+
+											table
+													.$(
+															'input[type="radio"]:checked')
+													.each(
+															function() {
+																rowSelected = this.value;
+															});
+
+											if (rowSelected == '') {
+												alert('Please Select a Row to '
+														+ actionType);
+											} else {
+
+												updateSelected(rowSelected,
+														actionType);
+											}
+										});
+
+						$('#abc').css("background-color", "white");
+
+					},
+
+					error : function(data) {
+						alert('It failed');
+					}
+				});
 
 	}
 
-
-	$(document)
-			.ready(
-					function() {
-						$("#user_approval")
-								.click(
-										function() {
-
-											$('#abc').empty();
-											displayDisabledUsers();
-											
-										});
-					});
-	
-	function updateDb(){
-		alert('Updating Db');
-		$
-		.ajax({
+	function updateDb() {
+		$.ajax({
 			type : 'GET',
-			url : location.origin
-					+ "${pageContext.request.contextPath}"
+			url : location.origin + "${pageContext.request.contextPath}"
 					+ '/moviesdb/admin/syncDbwithHD',
 			headers : {
 				Accept : 'application/json'
@@ -339,10 +379,10 @@
 			dataType : 'json',
 
 			success : function(data) {
-			alert(data);
-			$('#abc').empty();
-			$('#abc')
-			.append(data);
+				alert(data);
+				$('#abc').empty();
+				// 			$('#abc')
+				// 			.append(data);
 			},
 
 			error : function(data) {
@@ -350,49 +390,101 @@
 			}
 		});
 
-
 	}
-	
-	$(document)
-	.ready(
-			function() {
-				$("#user_crud")
-						.click(
-								function() {
 
-									$('#abc').empty();
-									displayAllUsers();
-									
-								});
-			});
-	
-	$(document)
-	.ready(
-			function() {
-				$("#syncHD")
-						.click(
-								function() {
+	function displayEditUserForm() {
+		$
+				.ajax({
+					type : 'GET',
+					url : location.origin
+							+ "${pageContext.request.contextPath}"
+							+ '/moviesdb/userHome/editForm',
+					headers : {
+						Accept : 'application/json'
+					},
+					dataType : 'json',
 
-									$('#abc').empty();
-									updateDb();
-									
-								});
-			});
+					success : function(data) {
+						
+						$('#abc').empty();
+						$('#abc').css("background-color", "#0ca3d2");
+						var formHolder = '<div class="c-container"><sf:form class="login" method="POST" modelAttribute="user"><h1>Registration Form</h1>'+
+						'<fieldset><p><sf:input path="fullName" size="15" id="user_full_name" value="'+data["fullName"]+'" /></p>'+
+						'<p><sf:input path="username" size="15" maxlength="15" id="user_screen_name" value="'+data["username"]+'" /></p>'+
+						'<p><sf:input path="email" size="30" id="user_email" value="'+data["email"]+'" /></p>'+
+						'<p><sf:input path="role" size="15" maxlength="15" id="user_role" value="'+data["role"]+'" /></p>'+
+						'</fieldset></sf:form></div>';
+						alert(formHolder);
+						$('#abc').append(formHolder);
+						
+					},
+
+					error : function(data) {
+						alert('It failed');
+					}
+				});
+	}
+
+	$(document).ready(function() {
+		$("#user_crud").click(function() {
+
+			$('#abc').empty();
+			$('#abc').append('<a class="progressbar"><a>');
+			displayAllUsers();
+
+		});
+	});
+
+	$(document).ready(function() {
+		$("#syncHD").click(function() {
+
+			$('#abc').empty();
+			$('#abc').append('<a class="progressbar"><a>');
+			updateDb();
+
+		});
+	});
+
+	$(document).ready(function() {
+		$("#user_approval").click(function() {
+
+			$('#abc').empty();
+			$('#abc').append('<a class="progressbar"><a>');
+			displayDisabledUsers();
+
+		});
+	});
+
+	$(document).ready(function() {
+		$("#userProfile").click(function() {
+
+			$('#abc').empty();
+			$('#abc').append('<a class="progressbar"><a>');
+			displayEditUserForm();
+
+		});
+	});
 </script>
 
 <div class="rightmenu">
 	<ul>
-		<li><a href='#'><span>My Profile</span></a></li>
-		<li class='active has-sub'><a href='#'><span>Administration</span></a>
+		<li class='active has-sub'><a href='#'><span>Profile</span></a>
 			<ul>
-				<li><a href='#' id="syncHD"><span>Sync HD</span></a></li>
-				<li><a href='#'><span>Sync Db</span></a></li>
+				<li><a href='#' id="userProfile"><span>View/Edit</span></a></li>
+				<li><a href='#' id="changePwd"><span>Change Password</span></a></li>
+			</ul></li>
+		<li class='active has-sub'><a href='#'><span>Data
+					Management</span></a>
+			<ul>
+				<li><a href='#' id="syncHD"><span>HD to Local Db</span></a></li>
+				<li><a href='#'><span>Imdb to Local Db</span></a></li>
+				<li><a href='#'><span>Cleanup HD</span></a></li>
 			</ul></li>
 		<li class='active has-sub'><a href='#'><span>User
 					Management</span></a>
 			<ul>
-				<li><a href='#' id="user_approval">Approve Pending</a></li>
-				<li><a href='#' id="user_crud"><span>View/Edit</span></a></li>
+				<li><a href='#' id="user_approval">Pending Approval</a></li>
+				<li><a href='#' id="user_crud"><span>Manage/Delete</span></a></li>
 			</ul></li>
 
 		<li class='last'><a href='${pageContext.request.contextPath}'><span>Logout</span></a></li>

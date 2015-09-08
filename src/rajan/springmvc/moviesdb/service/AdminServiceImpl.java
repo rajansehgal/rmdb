@@ -47,6 +47,30 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
+	public String updateUser(String selectedUser, String actionReqd) {
+		
+		int id= Integer.valueOf(selectedUser.split(":")[0].trim());
+		if (actionReqd!=null){
+			if (actionReqd.equals("Update Role")){
+				adminDao.updateUserRole(id,
+					"ROLE_" + selectedUser.split(":")[1].trim());
+				return "Selected User has been successfully Updated";
+			} else if (actionReqd.equals("Delete")){
+				adminDao.deleteUser(id);
+				return "Selected User has been successfully Deleted";
+			} else if (actionReqd.equals("Disable")){
+				adminDao.disableUser(id);
+				return "Selected User has been successfully Disabled";
+			} else {
+				return "Invalid Choice of Action: "+actionReqd;
+			}
+		}
+		
+		return "No Action taken as User Info Received is Null";
+	}
+
+	
+	@Override
 	public List<User> getAllUsers() {
 		// TODO Auto-generated method stub
 		return adminDao.getAllUsers();
@@ -99,7 +123,7 @@ public class AdminServiceImpl implements AdminService {
 					fileDetails = new FileDetails();
 					fileDetails.setFileName(f.getName());
 					String parentDir = "/";
-					fileDetails.setFileSize((f.length() / 1024 / 1024));
+					fileDetails.setFileSize((f.length() / 1024 / 1024));;
 
 					File temp = f.getParentFile();
 					while (true) {
@@ -112,6 +136,12 @@ public class AdminServiceImpl implements AdminService {
 							temp = temp.getParentFile();
 						}
 					}
+					
+					if (f.getParentFile().isDirectory() && f.getParentFile().getName().contains("(") && f.getParentFile().getName().contains(")")){
+						fileDetails.setDisplayName(f.getParentFile().getName().substring(0, f.getParentFile().getName().indexOf("(") - 1));
+					} else {
+						fileDetails.setDisplayName(f.getName());
+					}
 
 					fileDetails.setParentDir(parentDir);
 
@@ -122,4 +152,5 @@ public class AdminServiceImpl implements AdminService {
 		}
 	}
 
+	
 }

@@ -815,6 +815,21 @@ input[type=radio]:checked::after {
 	border-top-color: #666666;
 }
 
+/*
+** Progress Bar
+  */
+
+.progressbar{
+	background-image: url("../images/ajax-loader.gif");
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+/* 	text-align: center; */
+	width: 128px;
+	height: 15px;
+	
+}
 
 /*
 * For Table

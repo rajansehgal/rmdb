@@ -110,6 +110,35 @@ public class AdminController {
 		
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/updateUser")
+	public void updateUser(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="userSelected") String userSelected, @RequestParam(value="userAction") String userAction) throws IOException{
+		
+			System.out.println("I am at AC, updating User: "+userSelected);
+		
+		
+		response.setContentType("application/json");
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+		
+		
+		 ObjectMapper mapper = new ObjectMapper();
+		 Object userData = new String(adminService.updateUser(userSelected, userAction));
+		 String jsonString = mapper.writeValueAsString(userData);
+		 
+		    AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();
+		    MediaType jsonMimeType = MediaType.APPLICATION_JSON;
+		    if (stringHttpMessageConverter.canWrite(String.class, jsonMimeType)) {
+		        try {
+		            stringHttpMessageConverter.write(jsonString, jsonMimeType, new ServletServerHttpResponse(response));
+		        } catch (IOException m_Ioe) {
+		        } catch (HttpMessageNotWritableException p_Nwe) {
+		        }
+		    }
+		
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/syncDbwithHD")
 	public void syncHDtoLocalDb(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
@@ -126,7 +155,7 @@ public class AdminController {
 		if (currDir.canRead()){
 			long startTime=System.nanoTime();
 			adminService.syncDbwithHD(currDir);
-			msg="Time Taken is: "+(System.nanoTime()-startTime)/1000000;
+			msg="Time Taken is: "+(System.nanoTime()-startTime)/1000000+" ms";
 			
 		} else {
 			msg="HD not connected";

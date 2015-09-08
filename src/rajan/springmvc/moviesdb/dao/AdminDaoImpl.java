@@ -54,6 +54,29 @@ public class AdminDaoImpl implements AdminDao {
 		userToActivate.setApproved(true);
 		session.saveOrUpdate(userToActivate);
 	}
+	
+	@Override
+	public void deleteUser(int id) {
+		Session session = currentSession();
+		User userToDelete = (User) session.get(User.class, (long) id);
+		session.delete(userToDelete);
+	}
+
+	@Override
+	public void disableUser(int id) {
+		Session session = currentSession();
+		User userToDisable = (User) session.get(User.class, (long) id);
+		userToDisable.setApproved(false);
+		session.saveOrUpdate(userToDisable);
+	}
+
+	@Override
+	public void updateUserRole(int id, String role) {
+		Session session = currentSession();
+		User userToUpdate = (User) session.get(User.class, (long) id);
+		userToUpdate.setRole(role);
+		session.saveOrUpdate(userToUpdate);
+	}
 
 	@Override
 	public List<User> getAllUsers() {
@@ -70,7 +93,7 @@ public class AdminDaoImpl implements AdminDao {
 		//session.delete(FileDetails.class);
 		session.createQuery("DELETE FROM FileDetails").executeUpdate();
 		for (FileDetails f:fileDetails){
-			session.saveOrUpdate(f);
+			session.save(f);
 		}
 		
 	}
@@ -84,6 +107,8 @@ public class AdminDaoImpl implements AdminDao {
 		session.save(d);
 		}
 	}
+
+
 
 	
 

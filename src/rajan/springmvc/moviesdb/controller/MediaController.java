@@ -36,7 +36,7 @@ public class MediaController {
 				
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(mediaService.getMediaDetails(request.getParameter("mediaName")));
-		
+
  
         AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();
         MediaType jsonMimeType = MediaType.APPLICATION_JSON;

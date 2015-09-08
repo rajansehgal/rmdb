@@ -10,5 +10,6 @@ public interface AdminService {
 	List<User> getPendingUsers();
 	List<User> getAllUsers();
 	boolean enableInactiveUsers(String[] userList);
+	String updateUser(String selectedUser, String actionReqd);
 	void syncDbwithHD(File currDir);
 }

@@ -4,7 +4,7 @@
 <head>
 <title>Movies Database at RS</title>
 <link href="<s:url value="/resources" />/css/style.css"
-	rel="stylesheet" type="text/css" />
+	rel="stylesheet"  />
 </head>
 
 <body style="background-color: white;">

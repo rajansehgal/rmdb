@@ -20,6 +20,7 @@ public class FileDetails implements Serializable {
 	private String parentDir;
 	private boolean hasSubtitles;
 	private long fileSize;
+	private String displayName;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
@@ -60,6 +61,12 @@ public class FileDetails implements Serializable {
 	}
 	public void setFileSize(long fileSize) {
 		this.fileSize = fileSize;
+	}
+	public String getDisplayName() {
+		return displayName;
+	}
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 	
 	
