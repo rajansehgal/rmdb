@@ -17,4 +17,5 @@ public interface AdminDao {
 	void updateUserRole(int id, String role);
 	void updateFileDetails(List<FileDetails> fileDetails);
 	void updateDirStructure(List<DirStructure> dirStruct);
+	void emptyTable(String tableName);
 }

@@ -408,13 +408,12 @@
 						
 						$('#abc').empty();
 						$('#abc').css("background-color", "#0ca3d2");
-						var formHolder = '<div class="c-container"><sf:form class="login" method="POST" modelAttribute="user"><h1>Registration Form</h1>'+
+						var formHolder = '<div class="c-container"><sf:form class="editForm" method="POST" modelAttribute="user"><h1>Registration Form</h1>'+
 						'<fieldset><p><sf:input path="fullName" size="15" id="user_full_name" value="'+data["fullName"]+'" /></p>'+
 						'<p><sf:input path="username" size="15" maxlength="15" id="user_screen_name" value="'+data["username"]+'" /></p>'+
 						'<p><sf:input path="email" size="30" id="user_email" value="'+data["email"]+'" /></p>'+
 						'<p><sf:input path="role" size="15" maxlength="15" id="user_role" value="'+data["role"]+'" /></p>'+
 						'</fieldset></sf:form></div>';
-						alert(formHolder);
 						$('#abc').append(formHolder);
 						
 					},

@@ -91,21 +91,33 @@ public class AdminDaoImpl implements AdminDao {
 	public void updateFileDetails(List<FileDetails> fileDetails) {
 		Session session = currentSession();
 		//session.delete(FileDetails.class);
-		session.createQuery("DELETE FROM FileDetails").executeUpdate();
+		//session.createQuery("DELETE FROM FileDetails").executeUpdate();
+		//emptyTable("File_Details");
+		session.createSQLQuery("Truncate Table File_Details").executeUpdate();
 		for (FileDetails f:fileDetails){
 			session.save(f);
 		}
-		
+		session.flush();
 	}
 
 	@Override
 	public void updateDirStructure(List<DirStructure> dirStruct) {
 		Session session = currentSession();
 		//session.delete(DirStructure.class);
-		session.createQuery("DELETE FROM DirStructure").executeUpdate();
+		//session.createQuery("DELETE FROM DirStructure").executeUpdate();
+		session.createSQLQuery("Truncate Table Dir_Structure").executeUpdate();
+		//emptyTable("Dir_Structure");
 		for (DirStructure d:dirStruct){
 		session.save(d);
 		}
+		session.flush();
+	}
+
+	@Override
+	public void emptyTable(String tableName) {
+		Session session = currentSession();
+		session.createSQLQuery("Truncate Table "+tableName).executeUpdate();	
+		
 	}
 
 
