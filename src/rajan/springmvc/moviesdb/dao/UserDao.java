@@ -10,4 +10,6 @@ public interface UserDao {
 	User getUserInfo(String username);
 	List<String> getMainListing();
 	List<String> getSubListing(String mainDir);
+	User updateUserInfo(long userId, String userData);
+	User updateUserPwd(long userId, String userData);
 }

@@ -23,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import rajan.springmvc.moviesdb.dto.User;
 import rajan.springmvc.moviesdb.service.UserService;
@@ -63,6 +64,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, value = "/userHome")
 	public String displayUserHome(Model model) {
 		System.out.println("I am at UC, displaying User Home");
+		final String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		List<String> mainList = userService.getMainListing();
 		Map<String, List<String>> mapCat = new HashMap<String, List<String>>();
 		for (String m : mainList) {
@@ -70,14 +72,19 @@ public class UserController {
 
 		}
 		model.addAttribute("categories", mapCat);
+		model.addAttribute("user", userService.getUserInfo(currentUser));
 
 		return "moviesdb/userHome";
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/userHome/editForm")
-	public void displayUserInfo(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		final String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		System.out.println("I am at UC, getting User Details for: "+currentUser);
+	@RequestMapping(method = RequestMethod.GET, value = "/userHome/updateUserInfo")
+	public void updateUserInfo(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="userSelected") long userSelected, @RequestParam(value="userData") String userData, Model model) throws IOException{
+		
+		System.out.println("I am at UC, User Id: "+userSelected+" will be updated with data: "+userData);
+		
+		model.addAttribute("user", userService.updateUserInfo(userSelected, userData));
+		
+		
 		response.setContentType("application/json");
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
@@ -85,7 +92,39 @@ public class UserController {
 		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
 				
 		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(userService.getUserInfo(currentUser));
+		String jsonString = mapper.writeValueAsString("User Updated Successfully");
+		
+ 
+        AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();
+        MediaType jsonMimeType = MediaType.APPLICATION_JSON;
+        if (stringHttpMessageConverter.canWrite(String.class, jsonMimeType)) {
+            try {
+                stringHttpMessageConverter.write(jsonString, jsonMimeType, new ServletServerHttpResponse(response));
+            } catch (IOException m_Ioe) {
+            } catch (HttpMessageNotWritableException p_Nwe) {
+            }
+        }
+		
+		
+	}
+
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/userHome/updateUserPwd")
+	public void updateUserPwd(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="userSelected") long userSelected, @RequestParam(value="userData") String userData, Model model) throws IOException{
+		
+		System.out.println("I am at UC, User Id: "+userSelected+" will be updated with Password: "+userData);
+		
+		model.addAttribute("user", userService.updateUserPwd(userSelected, userData));
+		
+		
+		response.setContentType("application/json");
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+				
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonString = mapper.writeValueAsString("User's Password Updated Successfully");
 		
  
         AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();

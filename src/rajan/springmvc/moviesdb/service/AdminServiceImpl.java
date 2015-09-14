@@ -20,9 +20,9 @@ import rajan.springmvc.moviesdb.dto.User;
 @Transactional(propagation = Propagation.REQUIRED)
 public class AdminServiceImpl implements AdminService {
 
-	List<DirStructure> dirTable = new ArrayList<DirStructure>();
-	List<FileDetails> fileTable = new ArrayList<FileDetails>();
-	HashMap<String, Boolean> subKey = new HashMap<String, Boolean>();
+	List<DirStructure> dirTable;
+	List<FileDetails> fileTable;
+	HashMap<String, Boolean> subKey;
 	String PARENT_DIRECTORY;
 
 	@Resource(name = "adminDao")
@@ -79,6 +79,9 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public void syncDbwithHD(File currDir) {
 		PARENT_DIRECTORY = currDir.getName();
+		dirTable = new ArrayList<DirStructure>();
+		fileTable = new ArrayList<FileDetails>();
+		subKey = new HashMap<String, Boolean>();
 
 		getDirStructure(currDir);
 
@@ -88,10 +91,13 @@ public class AdminServiceImpl implements AdminService {
 			}
 		}
 
-		for (FileDetails f : fileTable) {
-			f.setHasSubtitles(subKey.containsKey(f.getFileName().substring(0,
-					f.getFileName().lastIndexOf('.'))));
+		if (!subKey.isEmpty()){
+			for (FileDetails f : fileTable) {
+				f.setHasSubtitles(subKey.containsKey(f.getFileName().substring(0,
+						f.getFileName().lastIndexOf('.'))));
+			}
 		}
+		
 
 		adminDao.updateDirStructure(dirTable);
 		adminDao.updateFileDetails(fileTable);

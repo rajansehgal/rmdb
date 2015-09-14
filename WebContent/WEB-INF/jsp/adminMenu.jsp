@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 
 <%-- 	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script> --%>
 <%-- <script type="text/javascript" src="<c:url value="/resources/javascripts/script.js" />"></script> --%>
@@ -392,37 +393,143 @@
 
 	}
 
-	function displayEditUserForm() {
-		$
-				.ajax({
-					type : 'GET',
-					url : location.origin
-							+ "${pageContext.request.contextPath}"
-							+ '/moviesdb/userHome/editForm',
-					headers : {
-						Accept : 'application/json'
+	function updateUser(userId,userData) {
+		$.ajax({
+			type : 'GET',
+			url : location.origin + "${pageContext.request.contextPath}"
+					+ '/moviesdb/userHome/updateUserInfo',
+			data : {	userSelected : userId,
+						userData : userData
 					},
-					dataType : 'json',
+			headers : {
+				Accept : 'application/json'
+			},
+			dataType : 'json',
 
-					success : function(data) {
-						
-						$('#abc').empty();
-						$('#abc').css("background-color", "#0ca3d2");
-						var formHolder = '<div class="c-container"><sf:form class="editForm" method="POST" modelAttribute="user"><h1>Registration Form</h1>'+
-						'<fieldset><p><sf:input path="fullName" size="15" id="user_full_name" value="'+data["fullName"]+'" /></p>'+
-						'<p><sf:input path="username" size="15" maxlength="15" id="user_screen_name" value="'+data["username"]+'" /></p>'+
-						'<p><sf:input path="email" size="30" id="user_email" value="'+data["email"]+'" /></p>'+
-						'<p><sf:input path="role" size="15" maxlength="15" id="user_role" value="'+data["role"]+'" /></p>'+
-						'</fieldset></sf:form></div>';
-						$('#abc').append(formHolder);
-						
-					},
+			success : function(data) {
+				alert(data);
+				clearMpanelFormatting();
+				displayUserEditForm();
+			},
 
-					error : function(data) {
-						alert('It failed');
-					}
-				});
+			error : function(data) {
+				alert('It failed');
+				clearMpanelFormatting();
+			}
+		});		
 	}
+
+	function clearMpanelFormatting(){
+		$('#abc').empty();
+		$('#abc').css("background-color", "#FFF4F8");
+	}
+	
+	function displayUserEditForm(){
+		$('#abc').empty();
+		
+		$('#abc').css("background-color", "#0ca3d2");
+		
+		var fullName="${user.fullName}";
+		var status = ("${user.approved}" == "true")?'Approved':'Pending Approval';
+	    var email = "${user.email}";
+	    var emailPref = "${user.updateByEmail}";
+		var userId= "${user.id}";
+		
+		
+		
+		var formHolder = '<div class="c-container">'+
+		'<fieldset class="editForm" style="margin-top:20%;height:auto;">'+
+		'<p><label for="user_full_name">Full Name: </label><input type="text" size="15" id="user_full_name" value="'+fullName+'"/></p>'+
+		'<p><label for="user_screen_name">Username (read only): </label><input type="text" disabled="true" size="15" id="user_screen_name" value="'+"${user.username}"+'"/></p>'+
+		'<p><input type="hidden" size="15" id="user_id" type="hidden" value="'+"${user.id}"+'"/></p>'+
+		'<p><label for="user_email">Email: </label><input type="text" size="30" id="user_email" value="'+email+'"/></p>'+
+		'<p><label for="user_role">Role (read only): </label><input type="text" disabled="true" size="15" maxlength="15" id="user_role" value="'+"${user.role}"+'"/></p>'+
+		'<p><label for="user_status">Status (read only): </label><input type="text" disabled="true" size="15" maxlength="15" id="user_status" value="'+status+'"/></p>'+
+		'<p><label for="user_pref">Subscribe For Newsletter: </label><input type="checkbox"  maxlength="15" id="user_pref" value="'+emailPref+'"/></p>'+
+		'<p class="submit"><input name="commit" id="user_update" type="submit" value="Update" href="#"/>   <input name="commit" id="user_cancel" type="submit" value="Cancel"  href="#"/></p>'+
+		'</fieldset></div>';
+		$('#abc').append(formHolder);
+		
+		var changeFlag = false;
+		var newName = fullName;
+		var newEmail = email;
+		var newChoice = emailPref;
+		
+//			$('#user_full_name').on('input', function() {
+//			    alert('Text1 changed!');
+//			});
+		
+		$("#user_full_name").change(function() {
+			newName = this.value;
+			if (newName != fullName) {
+				alert('Full Name is changed to: '+newName);
+				changeFlag = true;
+			}
+		});
+		
+		$("#user_email").change(function() {
+			newEmail = this.value;
+			if (newEmail != email) {
+				alert('Email is changed to: '+newEmail);
+				changeFlag = true;
+			}
+		});
+		
+		$("#user_pref").change(function() {
+			newChoice = $(this).is(':checked');
+			if (newChoice != emailPref) {
+				alert('New Preference is changed to: '+newChoice);
+				changeFlag = true;
+			}
+		});
+		
+		
+	
+		$("#user_update").click(function() {
+		
+			if (changeFlag) {
+				var userData = newName+':'+newEmail+':'+newChoice;
+				alert('Will call Database for '+userId+' with Data as--> '+userData);
+				updateUser(userId,userData);
+			} else {
+				alert('No Change in Data Detected, Please click cancel if you have changed Your Mind');
+			}
+
+		});
+		
+		$("#user_cancel").click(function() {
+			clearMpanelFormatting();
+		});
+
+
+	}
+	
+	
+	function updateUserPwd(userId,newPwd){
+		$.ajax({
+			type : 'GET',
+			url : location.origin + "${pageContext.request.contextPath}"
+					+ '/moviesdb/userHome/updateUserPwd',
+			data : {	userSelected : userId,
+						userData : newPwd
+					},
+			headers : {
+				Accept : 'application/json'
+			},
+			dataType : 'json',
+
+			success : function(data) {
+				alert(data);
+				clearMpanelFormatting();
+			},
+
+			error : function(data) {
+				alert('It failed');
+				clearMpanelFormatting();
+			}
+		});		
+	}
+	
 
 	$(document).ready(function() {
 		$("#user_crud").click(function() {
@@ -457,16 +564,67 @@
 	$(document).ready(function() {
 		$("#userProfile").click(function() {
 
+			displayUserEditForm();
+					});
+	});
+	
+	$(document).ready(function() {
+		$("#changePwd").click(function() {
+
+			var origpwd = "${user.password}";
+			var userId = "${user.id}";
+			var currPwd = '';
+			var newPwd = '';
+			var chgPwdFlag = true;
 			$('#abc').empty();
-			$('#abc').append('<a class="progressbar"><a>');
-			displayEditUserForm();
+			
+// 			$('#abc').css("background-color", "white");
+			var formHolder = '<div class="c-container">'+
+			'<fieldset class="editForm" style="margin-top:20%;height:auto;"><input type="password" size="15" id="current_pwd" placeholder="Current Password" style="margin-top:.5cm;margin-bottom:.5cm;"/></p>'+
+			'<input type="password" size="15" id="new_pwd" placeholder="New Password" style="margin-bottom:.5cm;"/></p>'+
+			'<input type="password" size="15" id="new_pwd_re" placeholder="Re-enter New Password" style="margin-bottom:1cm;"/></p>'+
+			'<input name="commit" id="user_update" type="submit" value="Update" href="#"/>   <input name="commit" id="user_cancel" type="submit" value="Cancel"  href="#"/></fieldset></div>';
+			$('#abc').append(formHolder);
+			
+			
+		
+
+			$("#user_update").click(function() {
+				newPwd = $('#new_pwd').val();
+				currPwd = $('#current_pwd').val();
+				
+				if ( currPwd != origpwd){
+					chgPwdFlag = false;
+					alert('Current Password enetered is incorrect');
+				}
+				
+				if ( newPwd != $('#new_pwd_re').val()){
+					chgPwdFlag = false;
+					alert('Passwords do not match');
+				}
+				
+				if ( newPwd == currPwd){
+					chgPwdFlag = false;
+					alert('There is no point in Password update whilst New and Current Passwords are same');
+				}
+				
+				
+					alert('Password Changed from: '+origpwd+' to '+newPwd+' for User Id: '+userId);
+					updateUserPwd(userId,newPwd);
+				
+				
+			});
+			
+			$("#user_cancel").click(function() {
+				clearMpanelFormatting();
+			});
 
 		});
 	});
 </script>
 
 <div class="rightmenu">
-	<ul>
+	<ul> 
 		<li class='active has-sub'><a href='#'><span>Profile</span></a>
 			<ul>
 				<li><a href='#' id="userProfile"><span>View/Edit</span></a></li>

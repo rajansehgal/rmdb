@@ -66,5 +66,24 @@ public class UserDaoImpl implements UserDao {
 		return finalList;
 	}
 
+	@Override
+	public User updateUserInfo(long userId, String userData) {
+		Session session = currentSession();
+		User userToUpdate = (User) session.get(User.class, (long) userId);
+		userToUpdate.setFullName(userData.split(":")[0]);
+		userToUpdate.setEmail(userData.split(":")[1]);
+		userToUpdate.setUpdateByEmail(Boolean.getBoolean(userData.split(":")[2]));
+		session.update(userToUpdate);
+		return userToUpdate;
+	}
 
+
+	@Override
+	public User updateUserPwd(long userId, String userData) {
+		Session session = currentSession();
+		User userToUpdate = (User) session.get(User.class, (long) userId);
+		userToUpdate.setPassword(userData);
+		session.update(userToUpdate);
+		return userToUpdate;
+	}
 }

@@ -41,5 +41,16 @@ public class UserServiceImpl implements UserService {
 		return userDao.getSubListing(mainDir);
 	}
 
+	@Override
+	public User updateUserInfo(long userId, String userData) {
+		return userDao.updateUserInfo(userId, userData);
+		
+	}
 
+
+	@Override
+	public User updateUserPwd(long userId, String userData) {
+		return userDao.updateUserPwd(userId, userData);
+		
+	}
 }

@@ -27,10 +27,10 @@
 					dataType : 'json',
 
 					success : function(data) {
-						var tableHolder = '<table id="myTable" class="display"><thead><tr><th>Display Name</th><th>Parent Directory</th><th>Subtitles(Y/N)</th><th>File Size(Mb)</th></tr></thead><tbody>';
+						var tableHolder = '<table id="myTable" class="display"><thead><tr><th>Display Name</th><th>Parent Directory</th><th>Subtitles</th><th>File Size(Mb)</th></tr></thead><tbody>';
 
 						$.each(data, function(index, val) {
-							var subDisplay=(val.hasSubtitles==true)?'Y':'N';
+							var subDisplay=(val.hasSubtitles==true)?'Available':'NA/Muxed';
 
 							tableHolder += '<tr><td>' + val.displayName
 									+ '</td><td>' + val.parentDir + '</td><td>'
