@@ -109,6 +109,17 @@ public class AdminDaoImpl implements AdminDao {
 		session.flush();
 	}
 
+	@Override
+	public void cleanUpDb(long fileId) {
+		Session session = currentSession();
+		
+		session.createQuery("DELETE FROM FileDetails Where id="+fileId).executeUpdate();
+		session.flush();
+		//	System.out.println("Dummy Deletion of record with File Id: "+fileId);
+		
+		
+	}
+
 		
 
 }

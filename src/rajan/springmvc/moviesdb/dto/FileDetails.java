@@ -18,10 +18,16 @@ public class FileDetails implements Serializable {
 	private int id;
 	private String fileName;
 	private String parentDir;
+	private String filePath;
 	private boolean hasSubtitles;
 	private long fileSize;
+	private long fileSizeOrig;
 	private String displayName;
+	private String category;
+	private int seasonNo;
+	private int episodeNo;
 	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	public int getId() {
@@ -62,6 +68,8 @@ public class FileDetails implements Serializable {
 	public void setFileSize(long fileSize) {
 		this.fileSize = fileSize;
 	}
+	
+	@Column
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -69,7 +77,45 @@ public class FileDetails implements Serializable {
 		this.displayName = displayName;
 	}
 	
+	@Column
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
 	
+	@Column
+	public long getFileSizeOrig() {
+		return fileSizeOrig;
+	}
+	public void setFileSizeOrig(long fileSizeOrig) {
+		this.fileSizeOrig = fileSizeOrig;
+	}
+	
+	@Column
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	
+	@Column
+	public int getSeasonNo() {
+		return seasonNo;
+	}
+	public void setSeasonNo(int seasonNo) {
+		this.seasonNo = seasonNo;
+	}
+	
+	@Column
+	public int getEpisodeNo() {
+		return episodeNo;
+	}
+	public void setEpisodeNo(int episodeNo) {
+		this.episodeNo = episodeNo;
+	}
 	
 	
 

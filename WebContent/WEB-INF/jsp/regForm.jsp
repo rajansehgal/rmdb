@@ -1,9 +1,11 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 
 <script type="text/javascript">
-$("#reg_cancel").click(function() {
-	
-});
+
+
+function goBack() {
+	window.history.back();
+}
 </script>
 <div class="c-container">
 	<sf:form class="login" method="POST" modelAttribute="user">
@@ -52,7 +54,7 @@ $("#reg_cancel").click(function() {
 			<!-- 				</label> -->
 			<!-- 			</p> -->
 			<p class="submit">
-				<input name="commit" type="submit" value="Create my Account." /> <input name="commit" id="reg_cancel" type="submit" value="No, Thanks!"/>
+				<input name="commit" type="submit" value="Create my Account." /> <input id="reg_cancel" type="button" value="No, Thanks!" onclick="goBack()" />
 			</p>
 		</fieldset>
 	</sf:form>

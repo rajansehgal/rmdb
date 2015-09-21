@@ -12,25 +12,6 @@
 	src="<c:url value="/resources/javascripts/jquery.dataTables.min.js" />"></script>
 
 <script>
-	$(document).ready(function() {
-		$(".rightmenu li.has-sub>a").click(function() {
-			$(this).removeAttr('href');
-			var element = $(this).parent('li');
-			if (element.hasClass('open')) {
-				element.removeClass('open');
-				element.find('li').removeClass('open');
-				element.find('ul').slideUp();
-			} else {
-				element.addClass('open');
-				element.children('ul').slideDown();
-				element.siblings('li').children('ul').slideUp();
-				element.siblings('li').removeClass('open');
-				element.siblings('li').find('li').removeClass('open');
-				element.siblings('li').find('ul').slideUp();
-			}
-		});
-	});
-
 	function enableSelected(rowSelected) {
 		alert('Calling for ' + rowSelected);
 		$.ajax({
@@ -54,6 +35,7 @@
 
 			error : function(data) {
 				alert('It failed');
+				clearMpanelFormatting();
 			}
 		});
 
@@ -85,6 +67,7 @@
 
 			error : function(data) {
 				alert('It failed');
+				clearMpanelFormatting();
 			}
 		});
 
@@ -121,10 +104,15 @@
 										});
 						tableHolder += '</tbody></table>';
 						var approveButton = '<input type="submit" id="appButton" value="Approve"/>';
+						var cancelButton = '<input name="commit" id="user_cancel" type="submit" value="Not Now, Later!" onclick="clearMpanelFormatting()"  href="#"/>';
 						$('#abc').empty();
 
 						$('#abc').append(tableHolder);
+						$('#abc').append('</br>');
 						$('#abc').append(approveButton);
+						$('#abc').append("\t\t\t");
+						$('#abc').append(cancelButton);
+						
 
 						var table = $('#myTable').DataTable({
 							scrollY : 200,
@@ -132,7 +120,12 @@
 							"scrollX" : false,
 							paging : false,
 							searching : false,
-							"ordering" : false
+							"ordering" : false,
+							"columnDefs": [
+							               {
+							                   "targets": [ 0 ],
+							                   "width": "1cm"
+							               }]
 						});
 						// Handle click on "Select all" control
 						$('#example-select-all').click(
@@ -204,6 +197,7 @@
 
 					error : function(data) {
 						alert('It failed');
+						clearMpanelFormatting();
 					}
 				});
 
@@ -259,9 +253,11 @@
 						var editButton = '<input type="submit" id="updateButton" value="Update Role"/>';
 						var deleteButton = '<input type="submit" id="deleteButton" value="Delete"/>';
 						var disableButton = '<input type="submit" id="disableButton" value="Disable"/>';
+						var cancelButton = '<input id="user_cancel" type="submit" value="Cancel" onclick="clearMpanelFormatting()" href="#"/>';
 
 						$('#abc').empty();
 						$('#abc').append(tableHolder);
+						$('#abc').append('</br>');
 						$('#abc').append(editButton);
 						$('#abc').append("\t\t\t");
 						$('#abc').append("\t\t\t");
@@ -269,6 +265,8 @@
 						$('#abc').append("\t\t\t");
 						$('#abc').append("\t\t\t");
 						$('#abc').append(disableButton);
+						$('#abc').append("\t\t\t");
+						$('#abc').append(cancelButton);
 
 						var table = $('#myTable').DataTable({
 							scrollY : 200,
@@ -276,7 +274,12 @@
 							"scrollX" : false,
 							paging : false,
 							searching : false,
-							"ordering" : false
+							"ordering" : false,
+							"columnDefs": [
+							               {
+							                   "targets": [ 0 ],
+							                   "width": "1cm"
+							               }]
 						});
 
 						$('#updateButton')
@@ -364,11 +367,13 @@
 
 					error : function(data) {
 						alert('It failed');
+						clearMpanelFormatting();
 					}
 				});
 
 	}
 
+// 	For updating Local Db with data from HArd Disk
 	function updateDb() {
 		$.ajax({
 			type : 'GET',
@@ -388,6 +393,34 @@
 
 			error : function(data) {
 				alert('It failed');
+				clearMpanelFormatting();
+			}
+		});
+
+	}
+	
+// 	For removing Junk Data from Hard Disk
+	function cleanUpHd(rowSelected) {
+		$.ajax({
+			type : 'POST',
+			url : location.origin + "${pageContext.request.contextPath}"
+					+ '/moviesdb/admin/cleanupHd',
+					data : {
+						filesSelected : rowSelected
+					},
+			headers : {
+				Accept : 'application/json'
+			},
+			dataType : 'json',
+
+			success : function(data) {
+				alert(data);
+				displayJunkData();
+			},
+
+			error : function(data) {
+				alert('It failed');
+				clearMpanelFormatting();
 			}
 		});
 
@@ -408,7 +441,7 @@
 
 			success : function(data) {
 				alert(data);
-				clearMpanelFormatting();
+				prepareMpanelFormatting();
 				displayUserEditForm();
 			},
 
@@ -420,90 +453,211 @@
 	}
 
 	function clearMpanelFormatting(){
+		
 		$('#abc').empty();
 		$('#abc').css("background-color", "#FFF4F8");
 	}
 	
-	function displayUserEditForm(){
-		$('#abc').empty();
+function prepareMpanelFormatting(){
 		
-		$('#abc').css("background-color", "#0ca3d2");
-		
-		var fullName="${user.fullName}";
-		var status = ("${user.approved}" == "true")?'Approved':'Pending Approval';
-	    var email = "${user.email}";
-	    var emailPref = "${user.updateByEmail}";
-		var userId= "${user.id}";
-		
-		
-		
-		var formHolder = '<div class="c-container">'+
-		'<fieldset class="editForm" style="margin-top:20%;height:auto;">'+
-		'<p><label for="user_full_name">Full Name: </label><input type="text" size="15" id="user_full_name" value="'+fullName+'"/></p>'+
-		'<p><label for="user_screen_name">Username (read only): </label><input type="text" disabled="true" size="15" id="user_screen_name" value="'+"${user.username}"+'"/></p>'+
-		'<p><input type="hidden" size="15" id="user_id" type="hidden" value="'+"${user.id}"+'"/></p>'+
-		'<p><label for="user_email">Email: </label><input type="text" size="30" id="user_email" value="'+email+'"/></p>'+
-		'<p><label for="user_role">Role (read only): </label><input type="text" disabled="true" size="15" maxlength="15" id="user_role" value="'+"${user.role}"+'"/></p>'+
-		'<p><label for="user_status">Status (read only): </label><input type="text" disabled="true" size="15" maxlength="15" id="user_status" value="'+status+'"/></p>'+
-		'<p><label for="user_pref">Subscribe For Newsletter: </label><input type="checkbox"  maxlength="15" id="user_pref" value="'+emailPref+'"/></p>'+
-		'<p class="submit"><input name="commit" id="user_update" type="submit" value="Update" href="#"/>   <input name="commit" id="user_cancel" type="submit" value="Cancel"  href="#"/></p>'+
-		'</fieldset></div>';
-		$('#abc').append(formHolder);
-		
-		var changeFlag = false;
-		var newName = fullName;
-		var newEmail = email;
-		var newChoice = emailPref;
-		
-//			$('#user_full_name').on('input', function() {
-//			    alert('Text1 changed!');
-//			});
-		
-		$("#user_full_name").change(function() {
-			newName = this.value;
-			if (newName != fullName) {
-				alert('Full Name is changed to: '+newName);
-				changeFlag = true;
-			}
-		});
-		
-		$("#user_email").change(function() {
-			newEmail = this.value;
-			if (newEmail != email) {
-				alert('Email is changed to: '+newEmail);
-				changeFlag = true;
-			}
-		});
-		
-		$("#user_pref").change(function() {
-			newChoice = $(this).is(':checked');
-			if (newChoice != emailPref) {
-				alert('New Preference is changed to: '+newChoice);
-				changeFlag = true;
-			}
-		});
-		
-		
+	$('#abc').empty();
+	$('#abc').css("background-color", "white");
+	$('#abc').append('<a class="progressbar"><a>');
+	}
 	
-		$("#user_update").click(function() {
+
+	
+function displayUserEditForm(){
 		
-			if (changeFlag) {
-				var userData = newName+':'+newEmail+':'+newChoice;
-				alert('Will call Database for '+userId+' with Data as--> '+userData);
-				updateUser(userId,userData);
-			} else {
-				alert('No Change in Data Detected, Please click cancel if you have changed Your Mind');
+		$.ajax({
+			type : 'GET',
+			url : location.origin + "${pageContext.request.contextPath}"
+					+ '/moviesdb/userHome/CurrentUserInfo',
+			headers : {
+				Accept : 'application/json'
+			},
+			dataType : 'json',
+
+			success : function(data) {
+							
+				clearMpanelFormatting();
+				var fullName=data.fullName;
+				var status = (data.approved == true)?'Approved':'Pending Approval';
+			    var email = data.email;
+			    var emailPref = data.updateByEmail;
+				var userId= data.id;
+				var checkBox='';
+				if (emailPref) {
+					checkBox = '<p><label for="user_pref">Subscribe For Newsletter: </label><input type="checkbox"  maxlength="15" id="user_pref" checked="checked"/></p>';	
+				} else {
+					checkBox = '<p><label for="user_pref">Subscribe For Newsletter: </label><input type="checkbox"  maxlength="15" id="user_pref" /></p>';
+				}
+				
+				
+				var formHolder = '<div class="c-container">'+
+				'<fieldset class="editForm" style="margin-top:20%;height:auto;">'+
+				'<p><label for="user_full_name">Full Name: </label><input type="text" size="15" id="user_full_name" value="'+fullName+'"/></p>'+
+				'<p><label for="user_screen_name">Username (read only): </label><input type="text" disabled="true" size="15" id="user_screen_name" value="'+data.username+'"/></p>'+
+				'<p><label for="user_email">Email: </label><input type="text" size="30" id="user_email" value="'+email+'"/></p>'+
+				'<p><label for="user_role">Role (read only): </label><input type="text" disabled="true" size="15" maxlength="15" id="user_role" value="'+data.role+'"/></p>'+
+				'<p><label for="user_status">Status (read only): </label><input type="text" disabled="true" size="15" maxlength="15" id="user_status" value="'+status+'"/></p>'+checkBox+
+				'<p class="submit"><input name="commit" id="user_update" type="submit" value="Update" href="#"/>   <input name="commit" id="user_cancel" type="submit" value="Not Now, Later!" onclick="clearMpanelFormatting()"  href="#"/></p>'+
+				'</fieldset></div>';
+				$('#abc').append(formHolder);
+				
+				var changeFlag = false;
+				var newName = fullName;
+				var newEmail = email;
+				var newChoice = emailPref;
+				
+//					$('#user_full_name').on('input', function() {
+//					    alert('Text1 changed!');
+//					});
+				
+				
+				$("#user_full_name").change(function() {
+					newName = this.value;
+					if (newName != fullName) {
+						alert('Full Name is changed to: '+newName);
+						if (newName.length > 3 && newName.length < 20) {
+							changeFlag=true;
+						} else {
+							alert('Full Name must be between 3 and 20 characters');
+						}
+					}
+				});
+				
+				$("#user_email").change(function() {
+					newEmail = this.value;
+					if (newEmail != email) {
+						alert('Email is changed to: '+newEmail);
+						var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+						if (re.test(newEmail)){
+							changeFlag = true;
+						} else {
+							alert('Invalid Email Address');
+						}
+					}
+				});
+				
+				$("#user_pref").change(function() {
+					newChoice = $(this).is(':checked');
+					if (newChoice) {
+						$("#user_pref").prop('checked', true);
+					} else {
+						$("#user_pref").prop('checked', false);
+					}
+					if (newChoice != emailPref) {
+						alert('New Preference is changed to: '+newChoice);
+						changeFlag = true;
+					}
+				});
+				
+				
+			
+				$("#user_update").click(function() {
+				
+					if (changeFlag) {
+						var userData = newName+':'+newEmail+':'+newChoice;
+						alert('Will call Database for '+userId+' with Data as--> '+userData);
+						updateUser(userId,userData);
+					} else {
+						alert('No Change in Data Detected, Please click cancel if you have changed Your Mind');
+					}
+
+				});
+				
+				$("#user_cancel").click(function() {
+					clearMpanelFormatting();
+				});
+
+			},
+
+			error : function(data) {
+				alert('It failed');
+				clearMpanelFormatting();
 			}
-
 		});
 		
-		$("#user_cancel").click(function() {
-			clearMpanelFormatting();
-		});
-
+		
+		
+		
 
 	}
 	
+function displayPwdChgForm(){
+	
+	$.ajax({
+		type : 'GET',
+		url : location.origin + "${pageContext.request.contextPath}"
+				+ '/moviesdb/userHome/CurrentUserInfo',
+		headers : {
+			Accept : 'application/json'
+		},
+		dataType : 'json',
+
+		success : function(data) {
+						
+			clearMpanelFormatting();
+			var origpwd = data.password;
+			var userId = data.id;
+			var currPwd = '';
+			var newPwd = '';
+			var chgPwdFlag = true;
+			
+			var formHolder = '<div class="c-container">'+
+			'<fieldset class="editForm" style="margin-top:20%;height:auto;"><input type="password" size="15" id="current_pwd" placeholder="Current Password" style="margin-top:.5cm;margin-bottom:.5cm;"/></p>'+
+			'<input type="password" size="15" id="new_pwd" placeholder="New Password" style="margin-bottom:.5cm;"/></p>'+
+			'<input type="password" size="15" id="new_pwd_re" placeholder="Re-enter New Password" style="margin-bottom:1cm;"/></p>'+
+			'<input name="commit" id="user_update" type="submit" value="Update" href="#"/>   <input name="commit" id="user_cancel" type="submit" value="Not Now, Later!" onclick="clearMpanelFormatting()"  href="#"/></fieldset></div>';
+			$('#abc').append(formHolder);
+			
+			$("#user_update").click(function() {
+				newPwd = $('#new_pwd').val();
+				currPwd = $('#current_pwd').val();
+				
+				if ( currPwd != origpwd){
+					chgPwdFlag = false;
+					alert('Current Password enetered is incorrect');
+				}
+				
+				if ( newPwd != $('#new_pwd_re').val()){
+					chgPwdFlag = false;
+					alert('Passwords do not match');
+				}
+				
+				if ( newPwd == currPwd){
+					chgPwdFlag = false;
+					alert('There is no point in Password update whilst New and Current Passwords are same');
+				}
+				
+				
+				if (chgPwdFlag) {
+					alert('Password Changed from: '+origpwd+' to '+newPwd+' for User Id: '+userId);
+					updateUserPwd(userId,newPwd);
+				} 
+					
+				
+			});
+			
+			$("#user_cancel").click(function() {
+				clearMpanelFormatting();
+			});
+
+
+		},
+
+		error : function(data) {
+			alert('It failed');
+			clearMpanelFormatting();
+		}
+	});
+	
+	
+	
+	
+
+}
 	
 	function updateUserPwd(userId,newPwd){
 		$.ajax({
@@ -530,18 +684,153 @@
 		});		
 	}
 	
+	function displayJunkData(){
+		$.ajax({
+			 type : 'GET',
+					url : location.origin+"${pageContext.request.contextPath}"+'/moviesdb/media/getNonMediaDetails',
+					headers : {
+						Accept : 'application/json'
+					},
+					dataType : 'json',
+
+					success : function(data) {
+						var tableHolder = '<table id="myTable" class="display"><thead><tr><th><input name="select_all" value="1" id="example-select-all" type="checkbox" class="dt-body-center"></th><th>Display Name</th><th>File Size(bytes)</th><th>File Path</th></tr></thead><tbody>';
+
+						$.each(data, function(index, val) {
+							tableHolder += '<tr><td><input type="checkbox" id="userRow" name="u_select" class="dt-body-center" value="'+val.id+'"></td><td>'+ val.displayName
+									+ '</td><td>'
+									+ val.fileSizeOrig +'</td><td>'
+								+ val.filePath + '</td></tr>';
+
+						});
+						tableHolder += '</tbody></table>';
+					
+						var submitButton = '<input type="submit" id="updateButton" value="Delete From Hard Disk"/>';
+						var cancelButton = '<input type="submit" id="cancelButton" value="Not Now, Later!" onclick="clearMpanelFormatting()"/>';
+						
+						$('#abc').empty();
+						$('#abc').append(tableHolder);
+						$('#abc').append('<br/>');
+						$('#abc').append(submitButton);
+						$('#abc').append("\t\t\t");
+						$('#abc').append("\t\t\t");
+						$('#abc').append(cancelButton);
+						$('#abc').append('<br/>');
+						
+						var table = $('#myTable').DataTable({
+							scrollY: 290,
+							"scrollCollapse": true,
+							"scrollX": false,
+							"lengthMenu": [[ 10, 25, 50, 75, 100, -1 ],[ 10, 25, 50, 75, 100, "All" ]],
+							"pagingType": "full_numbers",
+							"columnDefs": [
+							               {
+							                   "targets": [ 0 ],
+							                   "width": "1cm"
+							               }]
+						});
+						
+						$('#abc').css("background-color","white");
+						// Handle click on "Select all" control
+						$('#example-select-all').click(
+								function() {
+									// Get all rows with search applied
+									var rows = table.rows( {page:'current'} ).nodes();
+									// Check/uncheck checkboxes for all rows in the table
+									$('input[type="checkbox"]', rows).prop(
+											'checked', this.checked);
+
+								});
+
+						// Handle click on checkbox to set state of "Select all" control
+						$('#myTable tbody').on(
+								'change',
+								'input[type="checkbox"]',
+								function() {
+									// If checkbox is not checked
+
+									if (!this.checked) {
+										var el = $('#example-select-all')
+												.get(0);
+										// If "Select all" control is checked and has 'indeterminate' property
+										if (el && el.checked
+												&& ('indeterminate' in el)) {
+											// Set visual state of "Select all" control 
+											// as 'indeterminate'
+											el.indeterminate = true;
+										}
+									}
+								});
+						
+						$('#updateButton').click(
+								function() {
+									var rowSelected = [];
+
+									
+									var row = '';
+									
+								
+									// Iterate over all checkboxes in the table
+									table.$('input[type="checkbox"]:checked').each(function() {
+										row = $(this)
+										.parent()
+										.parent();
+														rowSelected
+																.push(this.value+ '##'+ row.find('td:eq(3)').html());
+														alert('Rowselected is: '+this.value
+																+ ' : '
+																+ row
+																		.find(
+																				'td:eq(3)')
+																		.html());
+
+													});
+
+									if (rowSelected == '') {
+										alert('Please Select at least one Row to Enable');
+									} else {
+										if (confirm('This action will result in deletion of '+rowSelected.length+' record(s), Do you want to continue?')){
+											cleanUpHd(rowSelected);
+										}
+									}
+								});
+
+					},
+
+					error : function(data) {
+						alert('It failed');
+						clearMpanelFormatting();
+					}
+				});
+
+	}
 
 	$(document).ready(function() {
+		$(".rightmenu li.has-sub>a").click(function() {
+			$(this).removeAttr('href');
+			var element = $(this).parent('li');
+			if (element.hasClass('open')) {
+				element.removeClass('open');
+				element.find('li').removeClass('open');
+				element.find('ul').slideUp();
+			} else {
+				element.addClass('open');
+				element.children('ul').slideDown();
+				element.siblings('li').children('ul').slideUp();
+				element.siblings('li').removeClass('open');
+				element.siblings('li').find('li').removeClass('open');
+				element.siblings('li').find('ul').slideUp();
+			}
+		});
+		
 		$("#user_crud").click(function() {
 
 			$('#abc').empty();
-			$('#abc').append('<a class="progressbar"><a>');
+			$('#abc').append('<a class="progressbar_c"><a>');
 			displayAllUsers();
 
 		});
-	});
 
-	$(document).ready(function() {
 		$("#syncHD").click(function() {
 
 			$('#abc').empty();
@@ -549,77 +838,40 @@
 			updateDb();
 
 		});
-	});
 
-	$(document).ready(function() {
+		$("#updateMedia").click(function() {
+
+			alert('This Option is under Construction!');
+
+		});
+		
+		$("#cleanupHD").click(function() {
+
+			$('#abc').empty();
+			$('#abc').append('<a class="progressbar_c"><a>');
+			displayJunkData();
+
+		});
+
 		$("#user_approval").click(function() {
 
 			$('#abc').empty();
-			$('#abc').append('<a class="progressbar"><a>');
+			$('#abc').append('<a class="progressbar_c"><a>');
 			displayDisabledUsers();
 
 		});
-	});
-
-	$(document).ready(function() {
+	
 		$("#userProfile").click(function() {
-
+			prepareMpanelFormatting();
 			displayUserEditForm();
 					});
-	});
 	
-	$(document).ready(function() {
 		$("#changePwd").click(function() {
 
-			var origpwd = "${user.password}";
-			var userId = "${user.id}";
-			var currPwd = '';
-			var newPwd = '';
-			var chgPwdFlag = true;
-			$('#abc').empty();
-			
-// 			$('#abc').css("background-color", "white");
-			var formHolder = '<div class="c-container">'+
-			'<fieldset class="editForm" style="margin-top:20%;height:auto;"><input type="password" size="15" id="current_pwd" placeholder="Current Password" style="margin-top:.5cm;margin-bottom:.5cm;"/></p>'+
-			'<input type="password" size="15" id="new_pwd" placeholder="New Password" style="margin-bottom:.5cm;"/></p>'+
-			'<input type="password" size="15" id="new_pwd_re" placeholder="Re-enter New Password" style="margin-bottom:1cm;"/></p>'+
-			'<input name="commit" id="user_update" type="submit" value="Update" href="#"/>   <input name="commit" id="user_cancel" type="submit" value="Cancel"  href="#"/></fieldset></div>';
-			$('#abc').append(formHolder);
-			
-			
+			prepareMpanelFormatting();
+			displayPwdChgForm();
 		
-
-			$("#user_update").click(function() {
-				newPwd = $('#new_pwd').val();
-				currPwd = $('#current_pwd').val();
-				
-				if ( currPwd != origpwd){
-					chgPwdFlag = false;
-					alert('Current Password enetered is incorrect');
-				}
-				
-				if ( newPwd != $('#new_pwd_re').val()){
-					chgPwdFlag = false;
-					alert('Passwords do not match');
-				}
-				
-				if ( newPwd == currPwd){
-					chgPwdFlag = false;
-					alert('There is no point in Password update whilst New and Current Passwords are same');
-				}
-				
-				
-					alert('Password Changed from: '+origpwd+' to '+newPwd+' for User Id: '+userId);
-					updateUserPwd(userId,newPwd);
-				
-				
-			});
-			
-			$("#user_cancel").click(function() {
-				clearMpanelFormatting();
-			});
-
-		});
+					});
 	});
 </script>
 
@@ -633,9 +885,9 @@
 		<li class='active has-sub'><a href='#'><span>Data
 					Management</span></a>
 			<ul>
-				<li><a href='#' id="syncHD"><span>HD to Local Db</span></a></li>
-				<li><a href='#'><span>Imdb to Local Db</span></a></li>
-				<li><a href='#'><span>Cleanup HD</span></a></li>
+				<li><a href='#' id="syncHD"><span>Sync with Hard Disk</span></a></li>
+				<li><a href='#' id="updateMedia"><span>Update Db via IMDB</span></a></li>
+				<li><a href='#' id ="cleanupHD"><span>Manage Junk Data</span></a></li>
 			</ul></li>
 		<li class='active has-sub'><a href='#'><span>User
 					Management</span></a>

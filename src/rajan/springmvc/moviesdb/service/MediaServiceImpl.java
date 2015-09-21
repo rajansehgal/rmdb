@@ -14,6 +14,7 @@ import rajan.springmvc.moviesdb.dto.FileDetails;
 @Service("mediaService")
 @Transactional(propagation = Propagation.REQUIRED)
 public class MediaServiceImpl implements MediaService {
+	private final static long SIZE=20;
 	
 	@Resource(name="mediaDao")
 	private MediaDao mediaDao;
@@ -23,5 +24,17 @@ public class MediaServiceImpl implements MediaService {
 		
 		return mediaDao.getMediaDetails(mediaType);
 	}
+
+	@Override
+	public List<FileDetails> getSeasonDetails(String seriesName, String seasonName) {
+		return mediaDao.getSeasonDetails(seriesName, seasonName);
+	}
+	
+	@Override
+	public List<FileDetails> getJunkMediaDetails() {
+		return mediaDao.getJunkMediaDetails(SIZE);
+	}
+
+	
 
 }

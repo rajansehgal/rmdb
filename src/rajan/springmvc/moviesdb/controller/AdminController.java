@@ -24,6 +24,7 @@ import rajan.springmvc.moviesdb.service.AdminService;
 @RequestMapping("/moviesdb/admin/")
 public class AdminController {
 
+	private final static String DRIVE_LABEL="H:\\";
 	@Resource(name="adminService")
 	private AdminService adminService;
 	
@@ -155,6 +156,46 @@ public class AdminController {
 		if (currDir.canRead()){
 			long startTime=System.nanoTime();
 			adminService.syncDbwithHD(currDir);
+			msg="Time Taken is: "+(System.nanoTime()-startTime)/1000000+" ms";
+			
+		} else {
+			msg="HD not connected";
+		}
+		
+		 ObjectMapper mapper = new ObjectMapper();
+		 Object userData = new String(msg);
+		 String jsonString = mapper.writeValueAsString(userData);
+		 
+		    AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();
+		    MediaType jsonMimeType = MediaType.APPLICATION_JSON;
+		    if (stringHttpMessageConverter.canWrite(String.class, jsonMimeType)) {
+		        try {
+		            stringHttpMessageConverter.write(jsonString, jsonMimeType, new ServletServerHttpResponse(response));
+		        } catch (IOException m_Ioe) {
+		        } catch (HttpMessageNotWritableException p_Nwe) {
+		        }
+		    }
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/cleanupHd")
+	public void cleanHDJunkData(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="filesSelected[]") String[] filesSelected) throws IOException{
+		
+			System.out.println("I am at AC, Cleaning FIles");	
+		
+		
+		response.setContentType("application/json");
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+		
+        File currDir = new File(DRIVE_LABEL);
+        String msg="";
+		
+		if (currDir.canRead()){
+			long startTime=System.nanoTime();
+			adminService.cleanUpHD(filesSelected);
 			msg="Time Taken is: "+(System.nanoTime()-startTime)/1000000+" ms";
 			
 		} else {

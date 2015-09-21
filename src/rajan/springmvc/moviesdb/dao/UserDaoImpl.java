@@ -45,6 +45,7 @@ public class UserDaoImpl implements UserDao {
 		Session session = currentSession();
 		Criteria criteria = session.createCriteria(DirStructure.class);
 		criteria.add(Restrictions.eq("topLevel", true));
+		criteria.add(Restrictions.ne("dirName", "TV Series"));
 		criteria.setProjection(Projections.property("dirName"));
 		@SuppressWarnings("unchecked")
 		final List<String> finalList = criteria.list();
@@ -52,6 +53,7 @@ public class UserDaoImpl implements UserDao {
 		return finalList;
 	}
 
+	
 	@Override
 	public List<String> getSubListing(String mainDir) {
 		
@@ -72,7 +74,8 @@ public class UserDaoImpl implements UserDao {
 		User userToUpdate = (User) session.get(User.class, (long) userId);
 		userToUpdate.setFullName(userData.split(":")[0]);
 		userToUpdate.setEmail(userData.split(":")[1]);
-		userToUpdate.setUpdateByEmail(Boolean.getBoolean(userData.split(":")[2]));
+		boolean emailFlag = (userData.split(":")[2].equals("true"))?true:false;
+		userToUpdate.setUpdateByEmail(emailFlag);
 		session.update(userToUpdate);
 		return userToUpdate;
 	}
@@ -86,4 +89,6 @@ public class UserDaoImpl implements UserDao {
 		session.update(userToUpdate);
 		return userToUpdate;
 	}
+
+	
 }

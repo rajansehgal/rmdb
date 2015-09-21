@@ -64,15 +64,25 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, value = "/userHome")
 	public String displayUserHome(Model model) {
 		System.out.println("I am at UC, displaying User Home");
-		final String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		
 		List<String> mainList = userService.getMainListing();
+		List<String> seriesList = userService.getSubListing("TV Series");
 		Map<String, List<String>> mapCat = new HashMap<String, List<String>>();
+		Map<String, List<String>> seriesCat = new HashMap<String, List<String>>();
 		for (String m : mainList) {
 			mapCat.put(m, userService.getSubListing(m));
 
 		}
+		
+		for (String s : seriesList) {
+			seriesCat.put(s, userService.getSubListing(s));
+
+		}
 		model.addAttribute("categories", mapCat);
-		model.addAttribute("user", userService.getUserInfo(currentUser));
+		
+		
+		
+		model.addAttribute("seriesList", seriesCat);
 
 		return "moviesdb/userHome";
 	}
@@ -93,6 +103,34 @@ public class UserController {
 				
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString("User Updated Successfully");
+		
+ 
+        AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();
+        MediaType jsonMimeType = MediaType.APPLICATION_JSON;
+        if (stringHttpMessageConverter.canWrite(String.class, jsonMimeType)) {
+            try {
+                stringHttpMessageConverter.write(jsonString, jsonMimeType, new ServletServerHttpResponse(response));
+            } catch (IOException m_Ioe) {
+            } catch (HttpMessageNotWritableException p_Nwe) {
+            }
+        }
+		
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/userHome/CurrentUserInfo")
+	public void getCurrentUserInfo(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		final String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		System.out.println("I am at UC, User Id: "+currentUser+" will be retrieved ");
+		
+		response.setContentType("application/json");
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+				
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonString = mapper.writeValueAsString(userService.getUserInfo(currentUser));
 		
  
         AbstractHttpMessageConverter<String> stringHttpMessageConverter = new StringHttpMessageConverter();

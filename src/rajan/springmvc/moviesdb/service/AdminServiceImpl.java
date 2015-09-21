@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class AdminServiceImpl implements AdminService {
 	List<FileDetails> fileTable;
 	HashMap<String, Boolean> subKey;
 	String PARENT_DIRECTORY;
+	private final static String SERIES = "TV Series";
 
 	@Resource(name = "adminDao")
 	private AdminDao adminDao;
@@ -127,9 +129,8 @@ public class AdminServiceImpl implements AdminService {
 									f.getName().indexOf(".srt")), true);
 				} else {
 					fileDetails = new FileDetails();
-					fileDetails.setFileName(f.getName());
 					String parentDir = "/";
-					fileDetails.setFileSize((f.length() / 1024 / 1024));;
+					
 
 					File temp = f.getParentFile();
 					while (true) {
@@ -149,13 +150,60 @@ public class AdminServiceImpl implements AdminService {
 						fileDetails.setDisplayName(f.getName());
 					}
 
+
+					fileDetails.setFileName(f.getName());
+					fileDetails.setFileSize((f.length() / 1024 / 1024));
+					fileDetails.setFileSizeOrig(f.length());
 					fileDetails.setParentDir(parentDir);
+					fileDetails.setFilePath(f.getAbsolutePath());
+					
+					if(parentDir.contains(SERIES)){
+						fileDetails.setCategory(SERIES);
+						
+						if (f.getParentFile().getName().startsWith("E") && f.getParentFile().getName().substring(1).trim().matches("\\d+")){
+							//System.out.println(f.getParentFile().getName().substring(1).trim()+f.getAbsolutePath());
+							fileDetails.setEpisodeNo(Integer.parseInt(f.getParentFile().getName().trim().substring(1).trim()));
+							if(f.getParentFile().getParentFile().getName().toUpperCase().startsWith("SEASON")){
+								fileDetails.setSeasonNo(Integer.parseInt(f.getParentFile().getParentFile().getName().substring(6).trim()));
+							}
+						} else if(f.getParentFile().getName().toUpperCase().startsWith("SEASON")){
+							fileDetails.setSeasonNo(Integer.parseInt(f.getParentFile().getName().substring(6).trim()));
+							//System.out.println(f.getParentFile().getName().substring(6).trim());
+						} else {
+							System.out.println(f.getParentFile().getName().substring(1).trim()+" for "+f.getAbsolutePath());
+						}
+						
+						
+					}
+					
+					
 
 					fileTable.add(fileDetails);
 				}
 
 			}
 		}
+	}
+
+	@Override
+	public void cleanUpHD(String[] fileList) {
+		long fileId;
+		String filePath;
+		for (String s: fileList){
+			System.out.println("Original String is: "+s);
+			fileId= Long.valueOf(s.split("##")[0]);
+			filePath = StringEscapeUtils.unescapeHtml(s.split("##")[1]);
+			File tempFile = new File(filePath);
+			System.out.println("Checking If I can delete: "+filePath);
+			if (tempFile.exists() && tempFile.canExecute()){
+				System.out.println("Yes I can, so shall I");
+				if (tempFile.delete()){
+					System.out.println("FIle Deleted, Lets get rid of it from Db");
+					adminDao.cleanUpDb(fileId);
+				}
+			}
+			}
+		
 	}
 
 	

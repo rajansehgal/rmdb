@@ -12,4 +12,5 @@ public interface AdminService {
 	boolean enableInactiveUsers(String[] userList);
 	String updateUser(String selectedUser, String actionReqd);
 	void syncDbwithHD(File currDir);
+	void cleanUpHD(String[] fileList);
 }
